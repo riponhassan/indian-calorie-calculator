@@ -1,1 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>HassanChef — Indian Food Calorie Calculator (Light Pastel Maroon)</title>
+<meta name="description" content="Free Indian Food Calorie Calculator — calculate calories, protein, carbs, fat and fiber for desi foods. Quick-add popular items, custom entries and per-serving totals."/>
+<style>
+  :root{
+    --primary:#E7C9C9;        /* soft pastel maroon (your screenshot match) */
+    --primary-accent:#B76E6E; /* slightly darker accent */
+    --primary-600:#b05858;
+    --primary-soft:#fdecec;
+    --bg:#fbf9f9;
+    --card:#ffffff;
+    --muted:#6b6b6b;
+    --radius:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,'Segoe UI',Roboto,Arial;background:var(--bg);color:#222;padding:18px;-webkit-font-smoothing:antialiased}
+  .app{max-width:1100px;margin:12px auto;border-radius:var(--radius);overflow:hidden;box-shadow:0 8px 30px rgba(34,34,34,0.08);background:linear-gradient(180deg,var(--card),#fff);border:1px solid rgba(165,90,90,0.04)}
+  header{display:flex;gap:14px;align-items:center;padding:18px;background:linear-gradient(90deg,var(--primary-accent),var(--primary-600));color:white}
+  .brand{width:64px;height:64px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px}
+  header h1{font-size:18px;margin:0}
+  header p{margin:2px 0 0;font-size:13px;opacity:0.95}
+  .grid{display:grid;grid-template-columns:1fr 380px;gap:18px;padding:18px}
+  .left{padding:10px}
+  .card{background:var(--card);border-radius:12px;padding:14px;border:1px solid rgba(0,0,0,0.03)}
+  label{display:block;font-size:13px;color:#333;margin-bottom:6px;font-weight:600}
+  input[type="text"],input[type="number"],select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #ececec;font-size:14px}
+  .small{font-size:13px;color:var(--muted)}
+  .btn{background:var(--primary-accent);color:white;border:0;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}
+  .btn.ghost{background:transparent;color:var(--primary-accent);border:1px solid rgba(183,110,110,0.12)}
+  .row{display:flex;gap:10px}
+  .autocomplete{position:relative}
+  .suggestions{position:absolute;left:0;right:0;z-index:40;background:white;border:1px solid #efe9e9;border-radius:10px;margin-top:6px;max-height:300px;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,0.06)}
+  .suggest-item{display:flex;gap:10px;padding:8px 10px;cursor:pointer;align-items:center}
+  .suggest-item:hover{background:#faf2f2}
+  .thumb{width:42px;height:32px;border-radius:6px;flex:0 0 42px;background:#f6f2f2;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .chip{background:var(--primary-soft);color:var(--primary-accent);padding:8px 10px;border-radius:999px;font-weight:600;border:1px solid rgba(183,110,110,0.06);cursor:pointer}
+  .table-wrap{margin-top:12px;overflow:auto}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:10px;border-bottom:1px solid #f6f1f1;text-align:left}
+  th{background:#fff7f7;color:var(--primary-accent);font-weight:700}
+  td.num{text-align:center}
+  .remove{color:#d9534f;background:none;border:0;font-weight:700;cursor:pointer}
+  .right{padding:10px}
+  .summary{position:sticky;top:18px}
+  .big{font-size:28px;font-weight:800;color:var(--primary-accent)}
+  .meta{color:var(--muted);margin-top:6px}
+  .summary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+  .sum-card{background:var(--primary-soft);border-radius:10px;padding:12px;border:1px solid rgba(183,110,110,0.06)}
+  .sum-card h4{margin:0;color:var(--muted);font-size:12px}
+  .sum-card .val{font-weight:800;font-size:20px;color:var(--primary-accent)}
+  .actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .note{font-size:13px;color:var(--muted);margin-top:10px}
+  @media (max-width:980px){.grid{grid-template-columns:1fr}.summary{position:relative;top:unset}}
+  @media (max-width:520px){header{padding:12px}.brand{width:48px;height:48px}.grid{gap:12px;padding:12px}th,td{font-size:12px;padding:8px}}
+  @media print{body *{visibility:visible}.app{box-shadow:none;border:0}.no-print{display:none}.grid{grid-template-columns:1fr}}
+</style>
 
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"SoftwareApplication",
+  "name":"HassanChef Indian Food Calorie Calculator",
+  "url":"https://www.hassanchef.com/p/blog-page_1.html",
+  "description":"Free Indian food calorie & nutrition calculator. Calculates calories, protein, carbs, fat and fiber for desi foods.",
+  "applicationCategory":"HealthApplication",
+  "operatingSystem":"Web Browser",
+  "author":{"@type":"Person","name":"Mobasir Hassan","jobTitle":"Executive Sous Chef"},
+  "publisher":{"@type":"Organization","name":"Hassanchef","logo":{"@type":"ImageObject","url":"https://www.hassanchef.com/logo.png"}},
+  "datePublished":"2025-10-01"
+}
+</script>
+</head>
+<body>
+  <div class="app" role="application" aria-label="HassanChef Indian Food Calorie Calculator">
+    <header>
+      <div class="brand">HC</div>
+      <div>
+        <h1>HassanChef — Indian Food Calorie Calculator</h1>
+        <p>Light Pastel Maroon • Calculate calories, protein, carbs, fat & fiber — per recipe & per serving</p>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- LEFT -->
+      <div class="left">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+            <div style="flex:1">
+              <label for="search">Search ingredient or dish (you can type units too — e.g. "150g paneer")</label>
+              <div class="autocomplete">
+                <input id="search" type="text" placeholder="Type e.g. 1 roti, 50g paneer, dosa" autocomplete="off" />
+                <div id="suggest" class="suggestions" style="display:none"></div>
+              </div>
+              <div class="small" style="margin-top:6px">Tip: choose from suggestions for best accuracy. Paste multi-line ingredients using Paste button.</div>
+            </div>
+
+            <div style="width:110px">
+              <label>Qty</label>
+              <input id="qty" type="number" min="0.1" step="0.1" value="1" />
+            </div>
+
+            <div style="width:140px">
+              <label>Unit (DB)</label>
+              <input id="unit" type="text" disabled value="-" />
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+            <button class="btn" id="addBtn">Add to list</button>
+            <button class="btn ghost no-print" id="openCustom">+ Custom</button>
+            <button class="btn ghost no-print" id="pasteBtn">Paste Ingredients</button>
+            <button class="btn ghost no-print" id="printBtn">Print / PDF</button>
+            <button class="btn ghost no-print" id="helpBtn">Help</button>
+          </div>
+
+          <div class="chips" id="popular" style="margin-top:12px"></div>
+
+          <div class="table-wrap" style="margin-top:12px">
+            <table id="itemsTable" aria-live="polite">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th class="num">Cal</th>
+                  <th class="num">Prot</th>
+                  <th class="num">Carb</th>
+                  <th class="num">Fat</th>
+                  <th class="num">Fib</th>
+                  <th class="num no-print"> </th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+            <div class="small">Recent items saved locally</div>
+            <div>
+              <button class="btn ghost no-print" id="saveRecipe">Save Locally</button>
+              <button class="btn ghost no-print" id="clearList">Clear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <aside class="right">
+        <div class="card summary">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div class="small">Total Calories</div>
+              <div class="big" id="totalKcal">0 kcal</div>
+              <div class="meta small">Per recipe • set servings below for per-serving values</div>
+            </div>
+            <div style="text-align:right">
+              <label class="small">Servings</label>
+              <input id="servings" type="number" min="1" value="1" style="width:86px;padding:8px;border-radius:8px;border:1px solid #eee;text-align:center" />
+            </div>
+          </div>
+
+          <div class="summary-grid" style="margin-top:12px">
+            <div class="sum-card"><h4>Calories</h4><div class="val" id="sumCal">0</div></div>
+            <div class="sum-card"><h4>Protein (g)</h4><div class="val" id="sumProt">0.0</div></div>
+            <div class="sum-card"><h4>Carbs (g)</h4><div class="val" id="sumCarb">0.0</div></div>
+            <div class="sum-card"><h4>Fat (g)</h4><div class="val" id="sumFat">0.0</div></div>
+            <div class="sum-card" style="grid-column:1 / -1"><h4>Fiber (g)</h4><div class="val" id="sumFib">0.0</div></div>
+          </div>
+
+          <div class="actions">
+            <button class="btn" id="copySummary">Copy Summary</button>
+            <button class="btn ghost no-print" id="exportCsv">Export CSV</button>
+          </div>
+
+          <div class="note"><strong>Chef tip:</strong> Use grams for greatest accuracy. Adjust servings to see per-serving values. Use paste mode to add many ingredients quickly.</div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h4 style="margin:0">Most Popular</h4>
+            <div class="small">Tap to add</div>
+          </div>
+          <div class="chips" id="popular2" style="margin-top:8px"></div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h4 style="margin:0 0 8px 0">About</h4>
+          <div class="small">This calculator uses a curated Indian foods database. Results are estimates — use grams where possible. For clinical decisions consult a dietician.</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+<script>
+/* ---------- Utilities ---------- */
+function uid(){ return 'id'+Math.random().toString(36).slice(2,9); }
+function fmt(n,dec=0){ return Number(n).toFixed(dec); }
+function sanitize(s){ return String(s||'').trim(); }
+function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ---------- DOM refs ---------- */
+const search = document.getElementById('search');
+const qty = document.getElementById('qty');
+const unit = document.getElementById('unit');
+const suggest = document.getElementById('suggest');
+const addBtn = document.getElementById('addBtn');
+const itemsTableBody = document.querySelector('#itemsTable tbody');
+const totalKcal = document.getElementById('totalKcal');
+const sumCal = document.getElementById('sumCal');
+const sumProt = document.getElementById('sumProt');
+const sumCarb = document.getElementById('sumCarb');
+const sumFat = document.getElementById('sumFat');
+const sumFib = document.getElementById('sumFib');
+const servingsInput = document.getElementById('servings');
+const popularDiv = document.getElementById('popular');
+const popular2Div = document.getElementById('popular2');
+const openCustom = document.getElementById('openCustom');
+const pasteBtn = document.getElementById('pasteBtn');
+const clearListBtn = document.getElementById('clearList');
+const printBtn = document.getElementById('printBtn');
+const saveRecipeBtn = document.getElementById('saveRecipe');
+const copySummaryBtn = document.getElementById('copySummary');
+const exportCsvBtn = document.getElementById('exportCsv');
+const helpBtn = document.getElementById('helpBtn');
+
+/* ---------- FOOD DB (expanded & curated) ----------
+Each entry { n, u, k, p, c, f, fb }
+u is descriptive unit stored in DB (e.g., "1 piece", "100g", "1 bowl (150g)")
+Note: This DB is chef-curated and includes household units + per-100g entries.
+---------------------------------------------------*/
+const FOOD_DB = [
+  /* --- Breads & Flatbreads --- */
+  {n:"Roti / Chapati (6 inch)", u:"1 piece", k:85, p:3, c:17, f:0.5, fb:2.5},
+  {n:"Roti (Butter/Ghee)", u:"1 piece", k:115, p:3, c:17, f:4, fb:2.5},
+  {n:"Paratha (Plain)", u:"1 piece", k:180, p:4, c:25, f:7, fb:3},
+  {n:"Aloo Paratha", u:"1 piece", k:290, p:6, c:45, f:10, fb:4},
+  {n:"Paneer Paratha", u:"1 piece", k:320, p:10, c:35, f:15, fb:3},
+  {n:"Methi Paratha", u:"1 piece", k:240, p:5, c:30, f:10, fb:4},
+  {n:"Naan (Plain)", u:"1 piece", k:260, p:8, c:45, f:5, fb:2},
+  {n:"Tandoori Roti", u:"1 piece", k:110, p:3.5, c:22, f:1, fb:3},
+  {n:"Puri", u:"1 piece", k:140, p:2, c:16, f:8, fb:0.5},
+  {n:"Bhatura", u:"1 piece", k:290, p:7, c:42, f:11, fb:1},
+  {n:"Missi Roti", u:"1 piece", k:170, p:6, c:25, f:5, fb:4},
+  {n:"Makki Ki Roti", u:"1 piece", k:150, p:3, c:28, f:3, fb:3},
+  {n:"Bajra Roti", u:"1 piece", k:130, p:3.5, c:25, f:2, fb:4},
+  {n:"Bread Slice (White)", u:"1 slice", k:65, p:2, c:12, f:1, fb:0.5},
+  {n:"Bread Slice (Brown)", u:"1 slice", k:75, p:3, c:14, f:1, fb:2},
+
+  /* --- Rice & Rice Dishes --- */
+  {n:"White Rice (Cooked) 150g", u:"1 bowl (150g)", k:195, p:4, c:42, f:0.5, fb:1},
+  {n:"Brown Rice (Cooked) 150g", u:"1 bowl (150g)", k:166, p:4, c:35, f:1, fb:3},
+  {n:"Jeera Rice", u:"1 bowl", k:250, p:4, c:42, f:7, fb:1},
+  {n:"Veg Pulao", u:"1 bowl", k:280, p:5, c:45, f:8, fb:3},
+  {n:"Veg Biryani", u:"1 bowl", k:320, p:6, c:50, f:10, fb:4},
+  {n:"Chicken Biryani", u:"1 bowl", k:450, p:25, c:45, f:18, fb:2},
+  {n:"Mutton Biryani", u:"1 bowl", k:550, p:28, c:45, f:28, fb:2},
+
+  /* --- Dals & Legumes --- */
+  {n:"Dal Tadka", u:"1 bowl", k:260, p:10, c:28, f:12, fb:6},
+  {n:"Dal Makhani", u:"1 bowl", k:350, p:12, c:30, f:20, fb:7},
+  {n:"Chole (Chickpea Curry)", u:"1 bowl", k:330, p:14, c:45, f:12, fb:12},
+  {n:"Rajma Masala", u:"1 bowl", k:300, p:14, c:40, f:9, fb:14},
+  {n:"Moong Dal (cooked)", u:"1 bowl", k:105, p:7, c:19, f:0.4, fb:2},
+
+  /* --- Vegetables & Sabzis --- */
+  {n:"Aloo Gobi", u:"1 bowl", k:190, p:4, c:25, f:9, fb:5},
+  {n:"Bhindi Masala", u:"1 bowl", k:160, p:3, c:15, f:10, fb:6},
+  {n:"Baingan Bharta", u:"1 bowl", k:140, p:3, c:15, f:8, fb:6},
+  {n:"Mix Veg Curry", u:"1 bowl", k:180, p:4, c:20, f:10, fb:5},
+  {n:"Palak Paneer", u:"1 bowl", k:340, p:18, c:12, f:25, fb:4},
+  {n:"Paneer Butter Masala", u:"1 bowl", k:400, p:16, c:18, f:30, fb:2},
+  {n:"Lauki Sabzi", u:"1 bowl", k:110, p:2, c:12, f:6, fb:4},
+
+  /* --- South Indian (priority) --- */
+  {n:"Idli (1 medium)", u:"1 piece", k:39, p:1.4, c:8.2, f:0.3, fb:0.9},
+  {n:"Idli (1 large)", u:"1 piece", k:65, p:2, c:14, f:0.5, fb:1.2},
+  {n:"Dosa (Plain)", u:"1 piece", k:170, p:4, c:30, f:4, fb:2},
+  {n:"Masala Dosa", u:"1 piece", k:350, p:8, c:45, f:15, fb:3},
+  {n:"Rava Dosa", u:"1 piece", k:200, p:5, c:30, f:6, fb:2},
+  {n:"Uttapam", u:"1 piece", k:200, p:5, c:35, f:5, fb:3},
+  {n:"Pongal (Ven Pongal)", u:"1 bowl", k:320, p:8, c:45, f:12, fb:3},
+  {n:"Puttu (1 cup)", u:"1 cup", k:160, p:3, c:35, f:1, fb:2},
+  {n:"Idiyappam (1)", u:"1 piece", k:50, p:1, c:11, f:0, fb:0.5},
+  {n:"Medu Vada", u:"1 piece", k:145, p:4, c:16, f:8, fb:2},
+  {n:"Sambar (South Indian)", u:"1 bowl", k:140, p:6, c:22, f:4, fb:5},
+  {n:"Coconut Chutney (2 tbsp)", u:"2 tbsp", k:60, p:0.6, c:2.5, f:5.5, fb:0.5},
+
+  /* --- Breakfast & Snacks --- */
+  {n:"Poha", u:"1 bowl", k:260, p:5, c:45, f:7, fb:3},
+  {n:"Upma", u:"1 bowl", k:250, p:6, c:40, f:8, fb:3},
+  {n:"Samosa (1 medium)", u:"1 piece", k:260, p:5, c:30, f:14, fb:2},
+  {n:"Vada Pav (1)", u:"1 piece", k:290, p:8, c:45, f:10, fb:4},
+  {n:"Dhokla (1 piece)", u:"1 piece", k:80, p:3, c:12, f:3, fb:1},
+
+  /* --- Street Foods / Chaat --- */
+  {n:"Pani Puri (1)", u:"1 piece", k:40, p:1, c:8, f:1, fb:0.5},
+  {n:"Bhel Puri (1 plate)", u:"1 plate", k:280, p:8, c:50, f:6, fb:4},
+  {n:"Dahi Puri (1 plate)", u:"1 plate", k:320, p:8, c:45, f:12, fb:3},
+  {n:"Pav Bhaji (1 plate)", u:"1 plate", k:400, p:10, c:60, f:14, fb:8},
+  {n:"Misal Pav (1 plate)", u:"1 plate", k:450, p:15, c:55, f:20, fb:8},
+
+  /* --- Sweets & Desserts --- */
+  {n:"Gulab Jamun (1)", u:"1 piece", k:150, p:2, c:25, f:6, fb:0},
+  {n:"Rasgulla (1)", u:"1 piece", k:125, p:3, c:28, f:0.5, fb:0},
+  {n:"Jalebi (1 piece)", u:"1 piece", k:100, p:1, c:22, f:2, fb:0},
+  {n:"Gajar Halwa (1 bowl)", u:"1 bowl", k:350, p:5, c:50, f:15, fb:4},
+  {n:"Rice Kheer (1 bowl)", u:"1 bowl", k:280, p:7, c:40, f:10, fb:1},
+
+  /* --- Non-Veg --- */
+  {n:"Chicken Curry (Home Style)", u:"1 bowl", k:280, p:28, c:8, f:14, fb:2},
+  {n:"Butter Chicken", u:"1 bowl", k:490, p:30, c:15, f:35, fb:2},
+  {n:"Tandoori Chicken (leg)", u:"1 piece", k:260, p:28, c:4, f:13, fb:0},
+  {n:"Fish Curry", u:"1 bowl", k:300, p:25, c:8, f:18, fb:1},
+  {n:"Mutton Rogan Josh", u:"1 bowl", k:550, p:30, c:10, f:42, fb:2},
+  {n:"Egg (Boiled)", u:"1 large", k:72, p:6, c:0.4, f:5, fb:0},
+  {n:"Egg Bhurji (2 eggs)", u:"1 plate", k:320, p:14, c:6, f:26, fb:1},
+
+  /* --- Nuts, Oils, Dairy, Staples (per-100g / per-tbsp) --- */
+  {n:"Paneer (Raw) 100g", u:"100g", k:265, p:18, c:1.2, f:20.8, fb:0},
+  {n:"Chicken Breast (Raw) 100g", u:"100g", k:165, p:31, c:0, f:3.6, fb:0},
+  {n:"Potato (Raw) 100g", u:"100g", k:77, p:2, c:17, f:0.1, fb:2.2},
+  {n:"Onion 100g", u:"100g", k:40, p:1.1, c:9, f:0.1, fb:1.7},
+  {n:"Tomato 100g", u:"100g", k:18, p:0.9, c:3.9, f:0.2, fb:1.2},
+  {n:"Milk (Whole) 100ml", u:"100ml", k:62, p:3.2, c:4.8, f:3.3, fb:0},
+  {n:"Curd / Yogurt 100g", u:"100g", k:60, p:3.5, c:4.7, f:3.3, fb:0},
+  {n:"Ghee 1 tbsp (15g)", u:"1 tbsp (15g)", k:135, p:0, c:0, f:15, fb:0},
+  {n:"Oil (Cooking) 1 tbsp (15g)", u:"1 tbsp (15g)", k:135, p:0, c:0, f:15, fb:0},
+  {n:"Sugar 1 tsp (5g)", u:"1 tsp (5g)", k:20, p:0, c:5, f:0, fb:0},
+  {n:"Almonds 10g", u:"10g", k:58, p:2, c:2, f:5, fb:1.2},
+  {n:"Cashews 10g", u:"10g", k:55, p:1.8, c:3, f:4.4, fb:0.3},
+  {n:"Walnuts 10g", u:"10g", k:65, p:1.5, c:1.4, f:6.5, fb:0.7},
+
+  /* --- Beverages & Misc --- */
+  {n:"Masala Chai (with milk & sugar) 1 cup", u:"1 cup", k:60, p:1.5, c:8, f:2, fb:0},
+  {n:"Filter Coffee (with milk & sugar) 1 cup", u:"1 cup", k:70, p:2, c:9, f:3, fb:0},
+  {n:"Lassi (Sweet) 1 glass", u:"1 glass", k:180, p:6, c:30, f:5, fb:0},
+  {n:"Buttermilk (Chaas) 1 glass", u:"1 glass", k:45, p:2, c:4, f:2, fb:0}
+];
+
+/* ---------- App state ---------- */
+let items = []; // {id,name,qty,unit,k,p,c,f,fb}
+let totals = {k:0,p:0,c:0,f:0,fb:0};
+
+/* ---------- Popular chips ---------- */
+const POPULAR = ["Roti / Chapati (6 inch)","White Rice (Cooked) 150g","Dal Tadka","Paneer (Raw) 100g","Chicken Biryani","Paratha (Plain)","Idli (1 medium)","Dosa (Plain)","Ghee 1 tbsp (15g)","Poha"];
+function renderPopular(){
+  POPULAR.forEach(name=>{
+    const btn = document.createElement('button'); btn.className='chip'; btn.textContent=name;
+    btn.onclick = ()=> quickAddByPhrase(name);
+    popularDiv.appendChild(btn);
+    const btn2 = btn.cloneNode(true); btn2.onclick = ()=> quickAddByPhrase(name);
+    popular2Div.appendChild(btn2);
+  });
+}
+renderPopular();
+
+/* ---------- Helper: units normalization ---------- */
+const UNIT_EQ = {
+  'tbsp':15, // grams for fat/oil (approx)
+  'tbs':15,
+  'tablespoon':15,
+  'tsp':5,
+  'cup':240, // ml approx for liquids; for cooked rice we treat as cooked volume (we use DB unit mapping heuristics)
+  'g':1,
+  'gram':1,
+  'kg':1000,
+  'ml':1
+};
+
+/* ---------- Smart input parser (grams mode) ----------
+ Accepts strings like:
+  - "150g paneer"
+  - "2 tbsp ghee"
+  - "1 cup cooked rice"
+  - "paneer 100g"
+  - "2 roti"
+ Returns { qty, unitShort, name 
