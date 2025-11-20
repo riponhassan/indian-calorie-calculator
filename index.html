@@ -1,6 +1,70 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <style>
+  /* Make the whole layout mobile friendly */
+  *, *::before, *::after { box-sizing: border-box; }
+
+  /* Main card/container */
+  .hc-container {
+    max-width: 900px;
+    margin: 16px auto;
+    padding: 18px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 6px 22px rgba(0,0,0,0.06);
+  }
+
+  /* Make rows flexible */
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .row .input {
+    flex: 1 1 220px;
+    min-width: 140px;
+  }
+
+  /* Stack buttons on mobile */
+  .btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .btn-group button {
+    flex: 1 1 100%;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  /* Summary grid responsive */
+  .summary-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .summary-card {
+    flex: 1 1 160px;
+    min-width: 160px;
+    background: #f7e7e7;
+    border-radius: 12px;
+    padding: 12px;
+  }
+
+  /* Table horizontal scroll safe */
+  .table-box {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  @media(max-width: 520px){
+    .hc-container { padding: 14px; margin: 12px; }
+    .btn-group button { font-size: 15px; }
+  }
+  </style>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>HassanChef — Indian Food Calorie Calculator</title>
