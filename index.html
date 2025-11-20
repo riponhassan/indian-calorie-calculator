@@ -218,5 +218,21 @@
   <!-- Database and script -->
   <script src="foods.js"></script>
   <script src="script.js"></script>
+  <script>
+  function sendHeight() {
+    try {
+      const h = document.body.scrollHeight;
+      parent.postMessage({ hcHeight: h }, "*");
+    } catch (e) {}
+  }
+
+  window.addEventListener("load", sendHeight);
+  window.addEventListener("resize", sendHeight);
+
+  const obs = new MutationObserver(sendHeight);
+  obs.observe(document.body, { childList: true, subtree: true });
+
+  setInterval(sendHeight, 1500);
+  </script>
 </body>
 </html>
