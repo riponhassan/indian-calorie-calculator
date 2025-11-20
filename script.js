@@ -1,6 +1,11 @@
-// =====================
+/* ============================
+   INDIAN CALORIE CALCULATOR
+   Fully compatible with foods.js (display + versions)
+   ============================ */
+
+// ----------------------------
 // GLOBAL STATE
-// =====================
+// ----------------------------
 let selectedFoodKey = null;
 let selectedQty = 1;
 let selectedUnit = 'serving';
@@ -13,67 +18,69 @@ let totals = {
   fiber: 0
 };
 
-// =====================
+
+// ----------------------------
 // DOM ELEMENTS
-// =====================
+// ----------------------------
 const searchEl = document.getElementById('search');
 const qtyEl = document.getElementById('qty');
 const unitEl = document.getElementById('unit');
 const suggestionsEl = document.getElementById('suggestions');
 const addBtn = document.getElementById('addBtn');
+
 const versionModal = document.getElementById('versionModal');
 const versionBtns = document.querySelectorAll('.version-choice-btn');
 
 
-// =====================
-// HELPER: FIND BEST MATCH IN foodDB
-// =====================
+// ----------------------------
+// HELPER: FIND BEST MATCH IN DB
+// ----------------------------
 function findFoodKey(raw) {
   if (!raw) return null;
+  const v = raw.trim().toLowerCase();
 
-  const val = raw.trim().toLowerCase();
   const keys = Object.keys(foodDB);
 
-  // exact
-  let k = keys.find(x => x.toLowerCase() === val);
+  // exact match
+  let k = keys.find(x => x.toLowerCase() === v);
   if (k) return k;
 
-  // starts-with
-  k = keys.find(x => x.toLowerCase().startsWith(val));
+  // starts with
+  k = keys.find(x => x.toLowerCase().startsWith(v));
   if (k) return k;
 
   // includes
-  k = keys.find(x => x.toLowerCase().includes(val));
+  k = keys.find(x => x.toLowerCase().includes(v));
   return k || null;
 }
 
 
-// =====================
-// AUTOCOMPLETE / LIVE SEARCH
-// =====================
+// ----------------------------
+// AUTOCOMPLETE SUGGESTIONS
+// ----------------------------
 searchEl.addEventListener('input', function () {
-  const query = this.value.toLowerCase();
+  const q = this.value.toLowerCase();
   suggestionsEl.innerHTML = "";
 
-  if (!query) return;
+  if (!q) return;
 
   const results = Object.keys(foodDB)
-    .filter(k => k.toLowerCase().includes(query))
-    .slice(0, 40); // limit 40 for performance
+    .filter(k => k.toLowerCase().includes(q))
+    .slice(0, 40);
 
   results.forEach(key => {
     const btn = document.createElement("button");
     btn.className = "suggestion-item";
     btn.setAttribute("data-food", key);
-    btn.textContent = foodDB[key].name;
+    btn.textContent = foodDB[key].display; // FIXED DISPLAY NAME
     suggestionsEl.appendChild(btn);
   });
 });
 
 
-// =====================
-// CLICK ON SUGGESTION → OPEN VERSION MODAL
-// =====================
+// ----------------------------
+// CLICK SUGGESTION → OPEN VERSION MODAL
+// ----------------------------
 document.addEventListener("click", function (e) {
   const btn = e.target.closest(".suggestion-item");
   if (!btn) return;
@@ -86,9 +93,9 @@ document.addEventListener("click", function (e) {
 });
 
 
-// =====================
+// ----------------------------
 // CLICK "ADD" BUTTON → OPEN VERSION MODAL
-// =====================
+// ----------------------------
 addBtn.addEventListener("click", function () {
   const raw = searchEl.value.trim();
   if (!raw) {
@@ -99,7 +106,7 @@ addBtn.addEventListener("click", function () {
 
   const key = findFoodKey(raw);
   if (!key) {
-    alert("Item not found. Please try again.");
+    alert("Item not found in database.");
     return;
   }
 
@@ -110,9 +117,9 @@ addBtn.addEventListener("click", function () {
 });
 
 
-// =====================
-// OPEN VERSION MODAL
-// =====================
+// ----------------------------
+// OPEN VERSION SELECT MODAL
+// ----------------------------
 function openVersionChoiceAndAdd(key, qty, unit) {
   selectedFoodKey = key;
   selectedQty = qty;
@@ -122,9 +129,9 @@ function openVersionChoiceAndAdd(key, qty, unit) {
 }
 
 
-// =====================
-// CHOOSE HOME / RESTAURANT VERSION
-// =====================
+// ----------------------------
+// CHOOSE RESTAURANT / HOME VERSION
+// ----------------------------
 versionBtns.forEach(btn => {
   btn.addEventListener("click", function () {
     const version = this.getAttribute("data-version");
@@ -134,11 +141,12 @@ versionBtns.forEach(btn => {
 });
 
 
-// =====================
-// ADD SELECTED FOOD TO TABLE
-// =====================
+// ----------------------------
+// ADD FOOD ITEM TO TABLE
+// ----------------------------
 function addFoodToList(key, version, qty, unit) {
-  const item = foodDB[key][version];
+  const item = foodDB[key].versions[version]; // FIXED VERSION STRUCTURE
+
   if (!item) {
     alert("Version data missing for: " + key);
     return;
@@ -146,11 +154,11 @@ function addFoodToList(key, version, qty, unit) {
 
   const calories = Math.round(item.cal * qty);
   const protein = (item.prot * qty).toFixed(1);
-  const carbs = (item.carb * qty).toFixed(1);
-  const fats = (item.fat * qty).toFixed(1);
-  const fiber = (item.fiber * qty).toFixed(1);
+  const carbs   = (item.carb * qty).toFixed(1);
+  const fats    = (item.fat * qty).toFixed(1);
+  const fiber   = item.fiber ? (item.fiber * qty).toFixed(1) : "0";
 
-  // update totals
+  // Update totals
   totals.cal += calories;
   totals.prot += parseFloat(protein);
   totals.carb += parseFloat(carbs);
@@ -159,10 +167,11 @@ function addFoodToList(key, version, qty, unit) {
 
   updateTotalsUI();
 
-  // append to list
+  // Create table row
   const row = document.createElement("tr");
   row.innerHTML = `
-    <td><strong>${foodDB[key].name}</strong><br>
+    <td>
+      <strong>${foodDB[key].display}</strong><br>
       <small>${version} • ${qty} × ${unit}</small>
     </td>
     <td>${calories}</td>
@@ -175,7 +184,7 @@ function addFoodToList(key, version, qty, unit) {
 
   document.querySelector("#foodList tbody").appendChild(row);
 
-  // remove row listener
+  // Remove row event
   row.querySelector(".remove-btn").addEventListener("click", function () {
     row.remove();
     totals.cal -= calories;
@@ -186,15 +195,15 @@ function addFoodToList(key, version, qty, unit) {
     updateTotalsUI();
   });
 
-  // clear search
+  // Clear UI
   searchEl.value = "";
   suggestionsEl.innerHTML = "";
 }
 
 
-// =====================
+// ----------------------------
 // UPDATE TOTALS IN UI
-// =====================
+// ----------------------------
 function updateTotalsUI() {
   document.getElementById("tCal").textContent = totals.cal;
   document.getElementById("tProt").textContent = totals.prot.toFixed(1);
@@ -204,9 +213,9 @@ function updateTotalsUI() {
 }
 
 
-// =====================
-// CLOSE MODAL (if clicking background)
-// =====================
+// ----------------------------
+// CLOSE MODAL WHEN CLICKING BACKDROP
+// ----------------------------
 versionModal.addEventListener("click", function (e) {
   if (e.target === versionModal) {
     versionModal.classList.remove("active");
