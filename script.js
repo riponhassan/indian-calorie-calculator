@@ -1,154 +1,214 @@
-/* ---- Version choice integration (Option C) ----
-   Usage:
-   - call openVersionChoiceAndAdd(foodKey, qty, unit) when user selects an item from autocomplete
-   - this will show a small modal / prompt to pick 'restaurant' or 'home'
-   - then it calls addFoodToList(foodKey, chosenVersion, qty, unit)
-*/
+// =====================
+// GLOBAL STATE
+// =====================
+let selectedFoodKey = null;
+let selectedQty = 1;
+let selectedUnit = 'serving';
 
-/* Simple modal using basic DOM (mobile-friendly). Create once. */
-function ensureVersionModalExists() {
-  if (document.getElementById('hc-version-modal')) return;
-  const modal = document.createElement('div');
-  modal.id = 'hc-version-modal';
-  modal.style.position = 'fixed';
-  modal.style.left = '12px';
-  modal.style.right = '12px';
-  modal.style.bottom = '12px';
-  modal.style.zIndex = '9999';
-  modal.style.background = '#fff';
-  modal.style.border = '1px solid #e0e0e0';
-  modal.style.borderRadius = '12px';
-  modal.style.boxShadow = '0 6px 24px rgba(0,0,0,0.12)';
-  modal.style.padding = '12px';
-  modal.style.display = 'none';
-  modal.style.fontFamily = 'sans-serif';
-  modal.innerHTML = `
-    <div style="font-weight:700; margin-bottom:8px;" id="hc-version-title"></div>
-    <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
-      <button id="hc-version-restaurant" style="flex:1; padding:10px; border-radius:8px; border:1px solid #b56565; background:#b56565; color:#fff;">Restaurant</button>
-      <button id="hc-version-home" style="flex:1; padding:10px; border-radius:8px; border:1px solid #e0e0e0; background:#fff;">Home</button>
-    </div>
-    <div style="display:flex; gap:8px; justify-content:flex-end;">
-      <button id="hc-version-cancel" style="padding:8px 10px; border-radius:8px; border:1px solid #ccc; background:#fff;">Cancel</button>
-    </div>
-  `;
-  document.body.appendChild(modal);
+let totals = {
+  cal: 0,
+  prot: 0,
+  carb: 0,
+  fat: 0,
+  fiber: 0
+};
 
-  document.getElementById('hc-version-restaurant').addEventListener('click', () => {
-    const data = modal._hcData;
-    modal.style.display = 'none';
-    addFoodToList(data.key, 'restaurant', data.qty, data.unit);
-  });
-  document.getElementById('hc-version-home').addEventListener('click', () => {
-    const data = modal._hcData;
-    modal.style.display = 'none';
-    addFoodToList(data.key, 'home', data.qty, data.unit);
-  });
-  document.getElementById('hc-version-cancel').addEventListener('click', () => {
-    modal.style.display = 'none';
-  });
+// =====================
+// DOM ELEMENTS
+// =====================
+const searchEl = document.getElementById('search');
+const qtyEl = document.getElementById('qty');
+const unitEl = document.getElementById('unit');
+const suggestionsEl = document.getElementById('suggestions');
+const addBtn = document.getElementById('addBtn');
+const versionModal = document.getElementById('versionModal');
+const versionBtns = document.querySelectorAll('.version-choice-btn');
+
+
+// =====================
+// HELPER: FIND BEST MATCH IN foodDB
+// =====================
+function findFoodKey(raw) {
+  if (!raw) return null;
+
+  const val = raw.trim().toLowerCase();
+  const keys = Object.keys(foodDB);
+
+  // exact
+  let k = keys.find(x => x.toLowerCase() === val);
+  if (k) return k;
+
+  // starts-with
+  k = keys.find(x => x.toLowerCase().startsWith(val));
+  if (k) return k;
+
+  // includes
+  k = keys.find(x => x.toLowerCase().includes(val));
+  return k || null;
 }
 
-/* Call this when user picks an item from autocomplete */
-function openVersionChoiceAndAdd(foodKey, qty = 1, unit = 'serving') {
-  ensureVersionModalExists();
-  const modal = document.getElementById('hc-version-modal');
-  const title = document.getElementById('hc-version-title');
-  const key = foodKey.toLowerCase();
-  if (!foodDB[key]) {
-    // fallback: try exact casing
-    const found = Object.keys(foodDB).find(k => k.toLowerCase() === key);
-    if (found) foodKey = found;
-  }
-  const display = foodDB[foodKey] ? foodDB[foodKey].display : foodKey;
-  title.textContent = `Add "${display}" — choose version`;
-  modal._hcData = { key: foodKey, qty, unit };
-  modal.style.display = 'block';
-}
 
-/* Example addFoodToList function — adapt to your table logic.
-   This should: create table row, update totals, store to localStorage if you do that.
-*/
-function addFoodToList(foodKey, version, qty = 1, unit = 'serving') {
-  if (!foodDB[foodKey]) {
-    // try lowercase
-    const found = Object.keys(foodDB).find(k => k.toLowerCase() === foodKey.toLowerCase());
-    if (found) foodKey = found;
-    else {
-      alert('Item not found in database: ' + foodKey);
-      return;
-    }
-  }
+// =====================
+// AUTOCOMPLETE / LIVE SEARCH
+// =====================
+searchEl.addEventListener('input', function () {
+  const query = this.value.toLowerCase();
+  suggestionsEl.innerHTML = "";
 
-  const obj = foodDB[foodKey];
-  const v = obj.versions && obj.versions[version] ? obj.versions[version] : null;
-  if (!v) {
-    alert('Version not found for ' + foodKey);
+  if (!query) return;
+
+  const results = Object.keys(foodDB)
+    .filter(k => k.toLowerCase().includes(query))
+    .slice(0, 40); // limit 40 for performance
+
+  results.forEach(key => {
+    const btn = document.createElement("button");
+    btn.className = "suggestion-item";
+    btn.setAttribute("data-food", key);
+    btn.textContent = foodDB[key].name;
+    suggestionsEl.appendChild(btn);
+  });
+});
+
+
+// =====================
+// CLICK ON SUGGESTION → OPEN VERSION MODAL
+// =====================
+document.addEventListener("click", function (e) {
+  const btn = e.target.closest(".suggestion-item");
+  if (!btn) return;
+
+  const key = btn.getAttribute("data-food");
+  const qty = parseFloat(qtyEl.value) || 1;
+  const unit = unitEl.value || "serving";
+
+  openVersionChoiceAndAdd(key, qty, unit);
+});
+
+
+// =====================
+// CLICK "ADD" BUTTON → OPEN VERSION MODAL
+// =====================
+addBtn.addEventListener("click", function () {
+  const raw = searchEl.value.trim();
+  if (!raw) {
+    alert("Please type a food name first.");
+    searchEl.focus();
     return;
   }
 
-  // Calculate totals for the quantity
-  const qtyNum = Number(qty) || 1;
-  const cal = (v.cal || 0) * qtyNum;
-  const prot = (v.prot || 0) * qtyNum;
-  const carb = (v.carb || 0) * qtyNum;
-  const fat = (v.fat || 0) * qtyNum;
-  const fiber = (v.fiber || 0) * qtyNum;
-
-  // Insert row in table with id="list" tbody
-  const tbody = document.querySelector('#list tbody');
-  if (!tbody) {
-    console.warn('Table tbody #list not found. Make sure table id="list" exists.');
+  const key = findFoodKey(raw);
+  if (!key) {
+    alert("Item not found. Please try again.");
     return;
   }
 
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td>${obj.display} <small style="color:#666">(${version})</small></td>
-    <td>${cal.toFixed(0)}</td>
-    <td>${prot.toFixed(1)}</td>
-    <td>${carb.toFixed(1)}</td>
-    <td>${fat.toFixed(1)}</td>
-    <td>${fiber ? fiber.toFixed(1) : '-'}</td>
-    <td><button class="hc-remove-row" style="padding:6px;border-radius:6px;background:#f3dede;border:1px solid #e0b8b8">Remove</button></td>
+  const qty = parseFloat(qtyEl.value) || 1;
+  const unit = unitEl.value || "serving";
+
+  openVersionChoiceAndAdd(key, qty, unit);
+});
+
+
+// =====================
+// OPEN VERSION MODAL
+// =====================
+function openVersionChoiceAndAdd(key, qty, unit) {
+  selectedFoodKey = key;
+  selectedQty = qty;
+  selectedUnit = unit;
+
+  versionModal.classList.add("active");
+}
+
+
+// =====================
+// CHOOSE HOME / RESTAURANT VERSION
+// =====================
+versionBtns.forEach(btn => {
+  btn.addEventListener("click", function () {
+    const version = this.getAttribute("data-version");
+    addFoodToList(selectedFoodKey, version, selectedQty, selectedUnit);
+    versionModal.classList.remove("active");
+  });
+});
+
+
+// =====================
+// ADD SELECTED FOOD TO TABLE
+// =====================
+function addFoodToList(key, version, qty, unit) {
+  const item = foodDB[key][version];
+  if (!item) {
+    alert("Version data missing for: " + key);
+    return;
+  }
+
+  const calories = Math.round(item.cal * qty);
+  const protein = (item.prot * qty).toFixed(1);
+  const carbs = (item.carb * qty).toFixed(1);
+  const fats = (item.fat * qty).toFixed(1);
+  const fiber = (item.fiber * qty).toFixed(1);
+
+  // update totals
+  totals.cal += calories;
+  totals.prot += parseFloat(protein);
+  totals.carb += parseFloat(carbs);
+  totals.fat += parseFloat(fats);
+  totals.fiber += parseFloat(fiber);
+
+  updateTotalsUI();
+
+  // append to list
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td><strong>${foodDB[key].name}</strong><br>
+      <small>${version} • ${qty} × ${unit}</small>
+    </td>
+    <td>${calories}</td>
+    <td>${protein}</td>
+    <td>${carbs}</td>
+    <td>${fats}</td>
+    <td>${fiber}</td>
+    <td><button class="remove-btn">×</button></td>
   `;
-  tbody.appendChild(tr);
 
-  // Remove button logic
-  tr.querySelector('.hc-remove-row').addEventListener('click', () => {
-    tr.remove();
-    recalcTotals();
+  document.querySelector("#foodList tbody").appendChild(row);
+
+  // remove row listener
+  row.querySelector(".remove-btn").addEventListener("click", function () {
+    row.remove();
+    totals.cal -= calories;
+    totals.prot -= parseFloat(protein);
+    totals.carb -= parseFloat(carbs);
+    totals.fat -= parseFloat(fats);
+    totals.fiber -= parseFloat(fiber);
+    updateTotalsUI();
   });
 
-  // Recalculate totals
-  recalcTotals();
+  // clear search
+  searchEl.value = "";
+  suggestionsEl.innerHTML = "";
 }
 
-/* Example recalcTotals function: sum table rows and show in #summary */
-function recalcTotals() {
-  const rows = document.querySelectorAll('#list tbody tr');
-  let cal = 0, prot = 0, carb = 0, fat = 0, fiber = 0;
-  rows.forEach(r => {
-    const cells = r.querySelectorAll('td');
-    // cells[1] = cal, [2]=prot, [3]=carb, [4]=fat, [5]=fiber
-    cal += Number(cells[1].textContent) || 0;
-    prot += Number(cells[2].textContent) || 0;
-    carb += Number(cells[3].textContent) || 0;
-    fat += Number(cells[4].textContent) || 0;
-    const f = Number(cells[5].textContent);
-    if (!isNaN(f)) fiber += f;
-  });
-  // Update summary DOM; keep device-friendly formatting
-  const summary = document.getElementById('summary');
-  if (summary) summary.innerHTML = `${cal.toFixed(0)} kcal • P ${prot.toFixed(1)}g • C ${carb.toFixed(1)}g • F ${fat.toFixed(1)}g • Fib ${fiber ? fiber.toFixed(1) + 'g' : '-'}`;
+
+// =====================
+// UPDATE TOTALS IN UI
+// =====================
+function updateTotalsUI() {
+  document.getElementById("tCal").textContent = totals.cal;
+  document.getElementById("tProt").textContent = totals.prot.toFixed(1);
+  document.getElementById("tCarb").textContent = totals.carb.toFixed(1);
+  document.getElementById("tFat").textContent = totals.fat.toFixed(1);
+  document.getElementById("tFiber").textContent = totals.fiber.toFixed(1);
 }
 
-/* Hook: If your autocomplete currently calls addItem(key) directly,
-   replace the call with openVersionChoiceAndAdd(key, qty, unit)
-   so the user sees the popup and picks restaurant/home.
-*/
 
-/* Ensure modal present on load */
-document.addEventListener('DOMContentLoaded', () => {
-  ensureVersionModalExists();
+// =====================
+// CLOSE MODAL (if clicking background)
+// =====================
+versionModal.addEventListener("click", function (e) {
+  if (e.target === versionModal) {
+    versionModal.classList.remove("active");
+  }
 });
