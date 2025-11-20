@@ -1,252 +1,154 @@
-/* script.js - calculator logic */
-(function(){
-  // References
-  const search = document.getElementById('search');
-  const suggestionsEl = document.getElementById('suggestions');
-  const addBtn = document.getElementById('addBtn');
-  const qtyEl = document.getElementById('qty');
-  const unitEl = document.getElementById('unit');
+/* ---- Version choice integration (Option C) ----
+   Usage:
+   - call openVersionChoiceAndAdd(foodKey, qty, unit) when user selects an item from autocomplete
+   - this will show a small modal / prompt to pick 'restaurant' or 'home'
+   - then it calls addFoodToList(foodKey, chosenVersion, qty, unit)
+*/
+
+/* Simple modal using basic DOM (mobile-friendly). Create once. */
+function ensureVersionModalExists() {
+  if (document.getElementById('hc-version-modal')) return;
+  const modal = document.createElement('div');
+  modal.id = 'hc-version-modal';
+  modal.style.position = 'fixed';
+  modal.style.left = '12px';
+  modal.style.right = '12px';
+  modal.style.bottom = '12px';
+  modal.style.zIndex = '9999';
+  modal.style.background = '#fff';
+  modal.style.border = '1px solid #e0e0e0';
+  modal.style.borderRadius = '12px';
+  modal.style.boxShadow = '0 6px 24px rgba(0,0,0,0.12)';
+  modal.style.padding = '12px';
+  modal.style.display = 'none';
+  modal.style.fontFamily = 'sans-serif';
+  modal.innerHTML = `
+    <div style="font-weight:700; margin-bottom:8px;" id="hc-version-title"></div>
+    <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+      <button id="hc-version-restaurant" style="flex:1; padding:10px; border-radius:8px; border:1px solid #b56565; background:#b56565; color:#fff;">Restaurant</button>
+      <button id="hc-version-home" style="flex:1; padding:10px; border-radius:8px; border:1px solid #e0e0e0; background:#fff;">Home</button>
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end;">
+      <button id="hc-version-cancel" style="padding:8px 10px; border-radius:8px; border:1px solid #ccc; background:#fff;">Cancel</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  document.getElementById('hc-version-restaurant').addEventListener('click', () => {
+    const data = modal._hcData;
+    modal.style.display = 'none';
+    addFoodToList(data.key, 'restaurant', data.qty, data.unit);
+  });
+  document.getElementById('hc-version-home').addEventListener('click', () => {
+    const data = modal._hcData;
+    modal.style.display = 'none';
+    addFoodToList(data.key, 'home', data.qty, data.unit);
+  });
+  document.getElementById('hc-version-cancel').addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+}
+
+/* Call this when user picks an item from autocomplete */
+function openVersionChoiceAndAdd(foodKey, qty = 1, unit = 'serving') {
+  ensureVersionModalExists();
+  const modal = document.getElementById('hc-version-modal');
+  const title = document.getElementById('hc-version-title');
+  const key = foodKey.toLowerCase();
+  if (!foodDB[key]) {
+    // fallback: try exact casing
+    const found = Object.keys(foodDB).find(k => k.toLowerCase() === key);
+    if (found) foodKey = found;
+  }
+  const display = foodDB[foodKey] ? foodDB[foodKey].display : foodKey;
+  title.textContent = `Add "${display}" — choose version`;
+  modal._hcData = { key: foodKey, qty, unit };
+  modal.style.display = 'block';
+}
+
+/* Example addFoodToList function — adapt to your table logic.
+   This should: create table row, update totals, store to localStorage if you do that.
+*/
+function addFoodToList(foodKey, version, qty = 1, unit = 'serving') {
+  if (!foodDB[foodKey]) {
+    // try lowercase
+    const found = Object.keys(foodDB).find(k => k.toLowerCase() === foodKey.toLowerCase());
+    if (found) foodKey = found;
+    else {
+      alert('Item not found in database: ' + foodKey);
+      return;
+    }
+  }
+
+  const obj = foodDB[foodKey];
+  const v = obj.versions && obj.versions[version] ? obj.versions[version] : null;
+  if (!v) {
+    alert('Version not found for ' + foodKey);
+    return;
+  }
+
+  // Calculate totals for the quantity
+  const qtyNum = Number(qty) || 1;
+  const cal = (v.cal || 0) * qtyNum;
+  const prot = (v.prot || 0) * qtyNum;
+  const carb = (v.carb || 0) * qtyNum;
+  const fat = (v.fat || 0) * qtyNum;
+  const fiber = (v.fiber || 0) * qtyNum;
+
+  // Insert row in table with id="list" tbody
   const tbody = document.querySelector('#list tbody');
-  const sumCalEl = document.getElementById('sumCal');
-  const sumProtEl = document.getElementById('sumProt');
-  const sumCarbEl = document.getElementById('sumCarb');
-  const sumFatEl = document.getElementById('sumFat');
-  const summaryText = document.getElementById('summary');
-  const servingsEl = document.getElementById('servings');
-  const copySummary = document.getElementById('copySummary');
-
-  let items = []; // items on recipe list
-
-  // Build an index for fast search (lowercase)
-  const names = Object.keys(foodDB);
-  const index = names.map(n => ({ key: n, low: n.toLowerCase() }));
-
-  function showSuggestions(q) {
-    const val = (q||'').trim().toLowerCase();
-    if(!val){ suggestionsEl.style.display='none'; suggestionsEl.innerHTML=''; return; }
-    // find best matches: startsWith > includes
-    const starts = index.filter(i => i.low.startsWith(val)).slice(0,12);
-    const includes = index.filter(i => !i.low.startsWith(val) && i.low.includes(val)).slice(0,10);
-    const results = starts.concat(includes).slice(0,18);
-    if(results.length===0){ suggestionsEl.style.display='none'; suggestionsEl.innerHTML=''; return; }
-    suggestionsEl.innerHTML = results.map(r => `<button type="button" data-name="${encodeURIComponent(r.key)}">${r.key}</button>`).join('');
-    suggestionsEl.style.display = 'block';
-    // attach listeners
-    Array.from(suggestionsEl.querySelectorAll('button')).forEach(b=>{
-      b.addEventListener('click', ()=>{
-        const name = decodeURIComponent(b.getAttribute('data-name'));
-        search.value = name;
-        suggestionsEl.style.display='none';
-        qtyEl.focus();
-      });
-    });
+  if (!tbody) {
+    console.warn('Table tbody #list not found. Make sure table id="list" exists.');
+    return;
   }
 
-  // event: search input
-  search.addEventListener('input', e => {
-    showSuggestions(e.target.value);
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${obj.display} <small style="color:#666">(${version})</small></td>
+    <td>${cal.toFixed(0)}</td>
+    <td>${prot.toFixed(1)}</td>
+    <td>${carb.toFixed(1)}</td>
+    <td>${fat.toFixed(1)}</td>
+    <td>${fiber ? fiber.toFixed(1) : '-'}</td>
+    <td><button class="hc-remove-row" style="padding:6px;border-radius:6px;background:#f3dede;border:1px solid #e0b8b8">Remove</button></td>
+  `;
+  tbody.appendChild(tr);
+
+  // Remove button logic
+  tr.querySelector('.hc-remove-row').addEventListener('click', () => {
+    tr.remove();
+    recalcTotals();
   });
 
-  // hide suggestions when clicking outside
-  document.addEventListener('click', e=>{
-    if(!e.target.closest('.suggestions')) suggestionsEl.style.display='none';
+  // Recalculate totals
+  recalcTotals();
+}
+
+/* Example recalcTotals function: sum table rows and show in #summary */
+function recalcTotals() {
+  const rows = document.querySelectorAll('#list tbody tr');
+  let cal = 0, prot = 0, carb = 0, fat = 0, fiber = 0;
+  rows.forEach(r => {
+    const cells = r.querySelectorAll('td');
+    // cells[1] = cal, [2]=prot, [3]=carb, [4]=fat, [5]=fiber
+    cal += Number(cells[1].textContent) || 0;
+    prot += Number(cells[2].textContent) || 0;
+    carb += Number(cells[3].textContent) || 0;
+    fat += Number(cells[4].textContent) || 0;
+    const f = Number(cells[5].textContent);
+    if (!isNaN(f)) fiber += f;
   });
+  // Update summary DOM; keep device-friendly formatting
+  const summary = document.getElementById('summary');
+  if (summary) summary.innerHTML = `${cal.toFixed(0)} kcal • P ${prot.toFixed(1)}g • C ${carb.toFixed(1)}g • F ${fat.toFixed(1)}g • Fib ${fiber ? fiber.toFixed(1) + 'g' : '-'}`;
+}
 
-  // helper: standardize unit; the DB values are per serving by default
-  function computeNutritionForEntry(name, qty, unit){
-    // name exists in DB? fallback exact match lower-case
-    let key = Object.keys(foodDB).find(k => k.toLowerCase() === name.toLowerCase());
-    if(!key){
-      // try fuzzy: find first that includes search
-      key = Object.keys(foodDB).find(k => k.toLowerCase().includes(name.toLowerCase()));
-    }
-    if(!key) return null;
-    const base = foodDB[key];
-    // If unit is grams (g) and DB has per "100g" style keys, we do a simple conversion:
-    // Many items are per serving in DB; for small items if user provides "g", we assume cal/100g when naming has number, but we avoid guesses.
-    // For simplicity: if user chooses 'g', treat DB value as per 100g if key contains '100g' or number; otherwise treat as per serving and scale by qty.
-    let multiplier = 1;
-    if(unit === 'g' || unit === 'ml'){
-      // if key text contains '100g' or '100ml' assume DB is per 100g/ml
-      if(key.toLowerCase().includes('100g') || key.toLowerCase().includes('100ml')){
-        multiplier = qty/100;
-      } else {
-        // assume qty means servings if they typed name like "paneer 100g" allow user to type "paneer 100g" in search
-        // fallback: if unit 'g' treat as (qty/100) of base
-        multiplier = qty/100;
-      }
-    } else {
-      // serving: multiply by qty
-      multiplier = qty;
-    }
+/* Hook: If your autocomplete currently calls addItem(key) directly,
+   replace the call with openVersionChoiceAndAdd(key, qty, unit)
+   so the user sees the popup and picks restaurant/home.
+*/
 
-    return {
-      name: key,
-      qty: qty,
-      unit: unit,
-      cal: +(base.cal * multiplier).toFixed(2),
-      prot: +(base.prot * multiplier).toFixed(2),
-      carb: +(base.carb * multiplier).toFixed(2),
-      fat: +(base.fat * multiplier).toFixed(2)
-    };
-  }
-
-  // render table
-  function renderList(){
-    tbody.innerHTML = items.map((it, idx) => `
-      <tr>
-        <td><strong>${escapeHtml(it.name)}</strong> <div class="small muted">(${it.qty} ${it.unit})</div></td>
-        <td>${it.cal}</td>
-        <td>${it.prot}</td>
-        <td>${it.carb}</td>
-        <td>${it.fat}</td>
-        <td><button class="remove-btn" data-i="${idx}">Remove</button></td>
-      </tr>
-    `).join('');
-    // attach remove handlers
-    Array.from(tbody.querySelectorAll('.remove-btn')).forEach(b=>{
-      b.addEventListener('click', ()=>{
-        const i = +b.getAttribute('data-i');
-        items.splice(i,1);
-        renderList();
-        updateSummary();
-      });
-    });
-    updateSummary();
-  }
-
-  // update totals
-  function updateSummary(){
-    const total = items.reduce((acc,it)=>{
-      acc.cal += Number(it.cal||0);
-      acc.prot += Number(it.prot||0);
-      acc.carb += Number(it.carb||0);
-      acc.fat += Number(it.fat||0);
-      return acc;
-    },{cal:0,prot:0,carb:0,fat:0});
-    const servings = Math.max(1, Number(servingsEl.value) || 1);
-    const perServing = {
-      cal: +(total.cal / servings).toFixed(2),
-      prot: +(total.prot / servings).toFixed(2),
-      carb: +(total.carb / servings).toFixed(2),
-      fat: +(total.fat / servings).toFixed(2)
-    };
-    sumCalEl.textContent = perServing.cal;
-    sumProtEl.textContent = perServing.prot;
-    sumCarbEl.textContent = perServing.carb;
-    sumFatEl.textContent = perServing.fat;
-    summaryText.textContent = `${total.cal.toFixed(2)} kcal • per recipe — ${perServing.cal} kcal per serving (${servings} serving(s))`;
-  }
-
-  // Add item
-  addBtn.addEventListener('click', ()=>{
-    const name = search.value.trim();
-    const qty = parseFloat(qtyEl.value) || 1;
-    const unit = unitEl.value || 'serving';
-    if(!name){ alert('Type an ingredient or dish name (e.g., butter naan)'); search.focus(); return; }
-    const entry = computeNutritionForEntry(name, qty, unit);
-    if(!entry){ alert('Item not found in database. Try alternate name or add as custom.'); return; }
-    items.push(entry);
-    renderList();
-    search.value='';
-    qtyEl.value='1';
-    unitEl.value='serving';
-    search.focus();
-  });
-
-  // Add custom (name + calories)
-  document.getElementById('addCustom').addEventListener('click', ()=>{
-    const name = prompt('Custom item name (e.g. "Homemade butter naan")');
-    if(!name) return;
-    const cal = parseFloat(prompt('Calories for this item (per serving)')) || 0;
-    const prot = parseFloat(prompt('Protein (g) for this item (per serving)')) || 0;
-    const carb = parseFloat(prompt('Carb (g)')) || 0;
-    const fat = parseFloat(prompt('Fat (g)')) || 0;
-    items.push({ name, qty:1, unit:'serving', cal, prot, carb, fat });
-    renderList();
-  });
-
-  // paste multi-line ingredients (one per line "paneer 100g" or "1 roti")
-  document.getElementById('pasteBtn').addEventListener('click', async ()=>{
-    let txt = '';
-    try {
-      txt = await navigator.clipboard.readText();
-    } catch(e){
-      txt = prompt('Paste ingredients (one per line):');
-    }
-    if(!txt) return;
-    const lines = txt.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
-    for(const line of lines){
-      // attempt to parse patterns: "100g paneer", "paneer 100g", "1 roti"
-      const mNum = line.match(/([\d.]+)\s*(g|gram|grams|ml|cup|serving|pcs|piece|roti|slice)?/i);
-      let qty=1, unit='serving', name=line;
-      // look for last token that is unit
-      const parts = line.split(/\s+/);
-      // if last token ends with g or ml or numbers present
-      const last = parts[parts.length-1].toLowerCase();
-      if(last.match(/^\d+g$|^\d+ml$/)) {
-        // e.g., '100g'
-        const num = last.replace(/[^\d.]/g,'');
-        qty = parseFloat(num) || 1;
-        unit = 'g';
-        name = parts.slice(0,parts.length-1).join(' ');
-      } else if(parts.length>1 && parts[0].match(/^\d+$/)){
-        qty = parseFloat(parts[0]);
-        name = parts.slice(1).join(' ');
-      } else {
-        // attempt to split numeric token anywhere
-        const numTok = parts.find(p => p.match(/^\d+$/));
-        if(numTok){
-          qty = parseFloat(numTok);
-          name = parts.filter(p=>p!==numTok).join(' ');
-        }
-      }
-      const entry = computeNutritionForEntry(name, qty, unit);
-      if(entry) items.push(entry);
-    }
-    renderList();
-  });
-
-  // copy summary
-  copySummary.addEventListener('click', ()=>{
-    const text = summaryText.textContent + '\n' +
-      `Calories: ${sumCalEl.textContent} kcal per serving\n` +
-      `Protein: ${sumProtEl.textContent} g per serving\n` +
-      `Carbs: ${sumCarbEl.textContent} g per serving\n` +
-      `Fat: ${sumFatEl.textContent} g per serving\n`;
-    navigator.clipboard?.writeText(text).then(()=> alert('Summary copied to clipboard'));
-  });
-
-  // servings change -> update
-  servingsEl.addEventListener('input', updateSummary);
-
-  // clear all on mobile sticky button
-  document.getElementById('clearAll').addEventListener('click', ()=>{
-    if(!confirm('Clear all items?')) return;
-    items=[];
-    renderList();
-  });
-
-  // small escape helper
-  function escapeHtml(str){
-    return String(str)
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-      .replace(/"/g,'&quot;').replace(/'/g,"&#039;");
-  }
-
-  // On page load, mobile sticky display
-  window.addEventListener('load', ()=>{
-    if(window.innerWidth < 700){
-      document.getElementById('mobileBar').style.display='flex';
-      document.getElementById('openCalc').addEventListener('click', ()=>{
-        window.scrollTo({top:0,behavior:'smooth'});
-      });
-    }
-  });
-
-  // Helpful: quick demo when user loads (keeps page friendly)
-  // (disabled by default; uncomment if you want a demo item)
-  // items.push(computeNutritionForEntry('butter naan',1,'serving'));
-  // renderList();
-
-})();
+/* Ensure modal present on load */
+document.addEventListener('DOMContentLoaded', () => {
+  ensureVersionModalExists();
+});
