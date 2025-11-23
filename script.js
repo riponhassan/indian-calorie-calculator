@@ -1,9 +1,9 @@
 /**************************************************
- CLEAN SCRIPT.JS — FULLY WORKING
+ HASSAN CHEF — FINAL CLEAN SCRIPT
 **************************************************/
 
 let allFoods = [];
-let mode = "home";
+let mode = "home"; // default
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -14,67 +14,68 @@ document.addEventListener("DOMContentLoaded", () => {
   const addBtn = document.getElementById("addBtn");
   const tableBody = document.querySelector("#list tbody");
 
-  /************ LOAD DATABASE ************/
+  // OPEN MODE POPUP
+  document.getElementById("modeBtn").onclick = () => {
+    document.getElementById("modePopup").style.display = "flex";
+  };
+
+  // LOAD foods.json
   async function loadFoods() {
     const res = await fetch("foods.json");
     const data = await res.json();
-
-    allFoods = data.map(item => ({
-      name: item.name,
-      unit: item.unit || "serving",
-      home: item.versions.home,
-      restaurant: item.versions.restaurant,
-    }));
-
-    console.log("Loaded:", allFoods.length, "foods");
+    allFoods = data;
+    console.log("Loaded:", allFoods.length);
   }
 
-  /************ SEARCH ************/
+  // SEARCH FUNCTION
   function searchFood(q) {
     suggestionsBox.innerHTML = "";
-    if (q.length < 2) { suggestionsBox.style.display = "none"; return; }
 
-    const matched = allFoods.filter(f =>
-      f.name.toLowerCase().includes(q.toLowerCase())
+    if (!q || q.length < 2) {
+      suggestionsBox.style.display = "none";
+      return;
+    }
+
+    const found = allFoods.filter(item =>
+      item.name.toLowerCase().includes(q.toLowerCase())
     );
 
-    matched.slice(0, 40).forEach(food => {
-      const b = document.createElement("button");
-      b.innerText = food.name;
-      b.onclick = () => {
+    found.slice(0, 40).forEach(food => {
+      const btn = document.createElement("button");
+      btn.innerText = food.name;
+      btn.onclick = () => {
         searchInput.value = food.name;
-        unitSelect.value = food.unit;
-        addBtn.onclick = () => addToTable(food);
+        addBtn.onclick = () => addToList(food);
         suggestionsBox.style.display = "none";
       };
-      suggestionsBox.appendChild(b);
+      suggestionsBox.appendChild(btn);
     });
 
-    suggestionsBox.style.display = matched.length ? "block" : "none";
+    suggestionsBox.style.display = found.length ? "block" : "none";
   }
 
-  /************ ADD TO TABLE ************/
-  function addToTable(food) {
-    const qty = parseFloat(qtyInput.value);
+  // ADD TO LIST
+  function addToList(food) {
+    const qty = Number(qtyInput.value) || 1;
     let multiplier = qty;
 
-    if (food.unit === "g" && unitSelect.value === "g") {
+    if (unitSelect.value === "g" && food.unit === "g") {
       multiplier = qty / 100;
     }
 
-    const v = food[mode];
+    const values = food.versions[mode];
 
     const row = document.createElement("tr");
     row.innerHTML = `
-      <td>${food.name}<br><small>${mode} • ${qty}${unitSelect.value}</small></td>
-      <td>${Math.round(v.cal * multiplier)}</td>
-      <td>${(v.prot * multiplier).toFixed(1)}</td>
-      <td>${(v.carb * multiplier).toFixed(1)}</td>
-      <td>${(v.fat * multiplier).toFixed(1)}</td>
-      <td><button class="remove">❌</button></td>
+      <td>${food.name}<br><small>${mode.toUpperCase()}</small></td>
+      <td>${Math.round(values.cal * multiplier)}</td>
+      <td>${(values.prot * multiplier).toFixed(1)}</td>
+      <td>${(values.carb * multiplier).toFixed(1)}</td>
+      <td>${(values.fat * multiplier).toFixed(1)}</td>
+      <td><button class="remove-btn">❌</button></td>
     `;
 
-    row.querySelector(".remove").onclick = () => {
+    row.querySelector(".remove-btn").onclick = () => {
       row.remove();
       updateTotals();
     };
@@ -83,46 +84,36 @@ document.addEventListener("DOMContentLoaded", () => {
     updateTotals();
   }
 
-  /************ TOTALS ************/
+  // TOTALS
   function updateTotals() {
-    let cal = 0, p = 0, c = 0, f = 0;
-
+    let c = 0, p = 0, cr = 0, f = 0;
     document.querySelectorAll("#list tbody tr").forEach(r => {
       const t = r.querySelectorAll("td");
-      cal += parseFloat(t[1].innerText);
-      p += parseFloat(t[2].innerText);
-      c += parseFloat(t[3].innerText);
-      f += parseFloat(t[4].innerText);
+      c += +t[1].innerText;
+      p += +t[2].innerText;
+      cr += +t[3].innerText;
+      f += +t[4].innerText;
     });
 
-    document.getElementById("sumCal").innerText = Math.round(cal);
+    document.getElementById("sumCal").innerText = Math.round(c);
     document.getElementById("sumProt").innerText = p.toFixed(1);
-    document.getElementById("sumCarb").innerText = c.toFixed(1);
+    document.getElementById("sumCarb").innerText = cr.toFixed(1);
     document.getElementById("sumFat").innerText = f.toFixed(1);
-    document.getElementById("summary").innerText = Math.round(cal) + " kcal";
+    document.getElementById("summary").innerText = Math.round(c) + " kcal";
   }
 
-  /************ MODE SWITCHING ************/
-  window.setModeHome = function () {
-    mode = "home";
-    document.getElementById("modeLabel").innerText = "Mode: Home Cooking";
-    document.getElementById("modePopup").style.display = "none";
-  };
-
-  window.setModeRestaurant = function () {
-    mode = "restaurant";
-    document.getElementById("modeLabel").innerText = "Mode: Restaurant Style";
-    document.getElementById("modePopup").style.display = "none";
-  };
-
-  /************ EVENTS ************/
+  // SEARCH LISTENER
   searchInput.addEventListener("input", e => searchFood(e.target.value));
-  document.addEventListener("click", e => {
-    if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
-      suggestionsBox.style.display = "none";
-    }
-  });
 
+  // LOAD DATA
   loadFoods();
 });
+
+// SET MODE + CLOSE POPUP
+function setMode(m) {
+  mode = m;
+  alert("Mode changed to " + m.toUpperCase());
+  document.getElementById("modePopup").style.display = "none";
+}
+
 
