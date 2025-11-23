@@ -1,119 +1,92 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    
-    // --- 1. SETUP VARIABLES ---
+
     let allFoods = [];
-    const searchInput = document.getElementById('search');      // Matches your HTML id="search"
-    const suggestionsBox = document.getElementById('suggestions'); // Matches your HTML id="suggestions"
+    const searchInput = document.getElementById('search');
+    const suggestionsBox = document.getElementById('suggestions');
     const qtyInput = document.getElementById('qty');
     const unitSelect = document.getElementById('unit');
     const addBtn = document.getElementById('addBtn');
     const tableBody = document.querySelector('#list tbody');
-    
-    // --- 2. LOAD DATA ---
+    const servingsInput = document.getElementById('servings');
+
+    // LOAD FOODS.JSON
     async function loadFoods() {
         try {
-            // A. Get local foods (from foods.js/foods_base.js if they exist)
-            // We check multiple variable names just in case
-            let localData = [];
-            if (typeof foods !== 'undefined') localData = foods;
-            else if (typeof foodList !== 'undefined') localData = foodList;
+            const response = await fetch('foods.json?v=' + Date.now());
+            allFoods = await response.json();
 
-            // B. Fetch external JSON
-            const response = await fetch('foods.json');
-            const externalData = await response.json();
-
-            // C. Combine them
-            allFoods = [...localData, ...externalData];
-            console.log(`Chef's Kitchen Ready: ${allFoods.length} ingredients loaded.`);
-
-        } catch (error) {
-            console.error("Error loading pantry:", error);
-            // Fallback to local only
-            if (typeof foods !== 'undefined') allFoods = foods;
+            console.log("Chef's Kitchen Ready:", allFoods.length, "ingredients loaded.");
+        } catch (e) {
+            console.error("❌ Error loading foods.json", e);
         }
     }
 
-    // --- 3. SEARCH FUNCTION ---
-    function searchFood(query) {
-        suggestionsBox.innerHTML = ''; // Clear list
-        
-        if (!query || query.length < 2) {
-            suggestionsBox.style.display = 'none';
+    // SEARCH
+    function searchFood(q) {
+        suggestionsBox.innerHTML = "";
+
+        if (!q || q.length < 2) {
+            suggestionsBox.style.display = "none";
             return;
         }
 
-        const lowerQuery = query.toLowerCase();
+        const query = q.toLowerCase();
         let count = 0;
 
-        for (const food of allFoods) {
-            if (count >= 50) break; // Stop after 50 matches to keep it fast
+        allFoods.forEach(food => {
+            if (count >= 50) return;
 
-            // Check if name exists and matches
-            if (food.name && food.name.toLowerCase().includes(lowerQuery)) {
-                showSuggestion(food);
+            if (food.name.toLowerCase().includes(query)) {
+                const btn = document.createElement('button');
+                btn.innerText = `${food.name}`;
+                btn.onclick = () => selectFood(food);
+                suggestionsBox.appendChild(btn);
                 count++;
             }
+        });
+
+        suggestionsBox.style.display = count ? "block" : "none";
+    }
+
+    // SELECT FOOD
+    function selectFood(food) {
+        searchInput.value = food.name;
+        suggestionsBox.style.display = "none";
+
+        // Auto set unit
+        if (food.unit === "g" || food.unit === "ml") {
+            unitSelect.value = food.unit;
+            qtyInput.value = 100;
+        } else {
+            unitSelect.value = "serving";
+            qtyInput.value = 1;
         }
 
-        suggestionsBox.style.display = count > 0 ? 'block' : 'none';
+        addBtn.onclick = () => addToTable(food);
     }
 
-   // --- 4. SHOW SUGGESTION (SMARTER VERSION) ---
-    function showSuggestion(food) {
-        const btn = document.createElement('button');
-        
-        // Check if this food is usually measured in Servings or Grams
-        // (If your JSON doesn't have a 'unit', we assume 'serving' for items like Apples)
-        const preferredUnit = food.unit || 'serving'; 
-        
-        btn.innerText = `${food.name} (${food.calories} kcal / ${preferredUnit})`;
-        
-        btn.onclick = () => {
-            searchInput.value = food.name; // Fill input
-            suggestionsBox.style.display = 'none'; // Hide list
-            
-            // --- SMART SWITCH LOGIC ---
-            // If the food is per serving (like Apple, Egg), switch dropdown to "Serving"
-            // If the food is usually grams (like Rice), switch dropdown to "Grams"
-            if (preferredUnit === 'g' || preferredUnit === 'ml') {
-                unitSelect.value = preferredUnit;
-                qtyInput.value = '100'; // Default to 100g for rice/curry
-            } else {
-                unitSelect.value = 'serving';
-                qtyInput.value = '1';   // Default to 1 item for Apple/Egg
-            }
-
-            // Bind the add button
-            addBtn.onclick = () => addToTable(food);
-        };
-        
-        suggestionsBox.appendChild(btn);
-    
-    }
-
-    // --- 5. ADD TO TABLE LOGIC ---
+    // ADD TO TABLE
     function addToTable(food) {
         const qty = parseFloat(qtyInput.value) || 1;
-        const unit = unitSelect.value; 
+        const unit = unitSelect.value;
 
-        // Calculate Multiplier
-        // Note: You may need to adjust this logic based on your specific data units
+        // Get home or restaurant values — default restaurant
+        const use = food.restaurant || food.home;
+
         let multiplier = qty;
-        
-        // Simple logic: If data is per 100g and user selected 'g', divide by 100
-        if (unit === 'g') {
-             multiplier = qty / 100;
+
+        if (unit === 'g' && food.unit === 'g') {
+            multiplier = qty / 100;
         }
 
-        const totalCal = Math.round(food.calories * multiplier);
-        const totalProt = (food.protein * multiplier).toFixed(1);
-        const totalCarb = (food.carbs * multiplier).toFixed(1);
-        const totalFat = (food.fat * multiplier).toFixed(1);
+        const totalCal = Math.round(use.cal * multiplier);
+        const totalProt = (use.prot * multiplier).toFixed(1);
+        const totalCarb = (use.carb * multiplier).toFixed(1);
+        const totalFat = (use.fat * multiplier).toFixed(1);
 
-        // Create Row
-        const row = document.createElement('tr');
+        const row = document.createElement("tr");
         row.innerHTML = `
-            <td>${food.name} <br><small class="muted">${qty}${unit}</small></td>
+            <td>${food.name}<br><small>${qty}${unit}</small></td>
             <td>${totalCal}</td>
             <td>${totalProt}</td>
             <td>${totalCarb}</td>
@@ -121,51 +94,38 @@ document.addEventListener('DOMContentLoaded', async () => {
             <td><button class="remove-btn">❌</button></td>
         `;
 
-        // Remove Button Logic
-        row.querySelector('.remove-btn').onclick = () => {
+        row.querySelector(".remove-btn").onclick = () => {
             row.remove();
             updateTotal();
         };
 
         tableBody.appendChild(row);
-        updateTotal(); // Update bottom totals
-        
-        // Reset search
-        searchInput.value = '';
-        qtyInput.value = '1';
+        updateTotal();
+        searchInput.value = "";
     }
 
-    // --- 6. UPDATE TOTALS ---
+    // UPDATE TOTALS
     function updateTotal() {
-        let c=0, p=0, carb=0, f=0;
-        
-        // Loop through all table rows
+        let totalCal = 0, p=0, c=0, f=0;
+
         document.querySelectorAll('#list tbody tr').forEach(row => {
             const cols = row.querySelectorAll('td');
-            c += parseFloat(cols[1].innerText);
+            totalCal += parseFloat(cols[1].innerText);
             p += parseFloat(cols[2].innerText);
-            carb += parseFloat(cols[3].innerText);
+            c += parseFloat(cols[3].innerText);
             f += parseFloat(cols[4].innerText);
         });
 
-        // Update HTML
-        document.getElementById('sumCal').innerText = Math.round(c);
-        document.getElementById('sumProt').innerText = p.toFixed(1);
-        document.getElementById('sumCarb').innerText = carb.toFixed(1);
-        document.getElementById('sumFat').innerText = f.toFixed(1);
-        document.getElementById('summary').innerText = `${Math.round(c)} kcal`;
+        const servings = parseFloat(servingsInput.value) || 1;
+
+        document.getElementById('sumCal').innerText = Math.round(totalCal / servings);
+        document.getElementById('sumProt').innerText = (p / servings).toFixed(1);
+        document.getElementById('sumCarb').innerText = (c / servings).toFixed(1);
+        document.getElementById('sumFat').innerText = (f / servings).toFixed(1);
+
+        document.getElementById('summary').innerText = `${Math.round(totalCal)} kcal`;
     }
 
-    // --- START ---
     await loadFoods();
-    
-    // Listeners
     searchInput.addEventListener('input', (e) => searchFood(e.target.value));
-    
-    // Hide suggestions if clicking outside
-    document.addEventListener('click', (e) => {
-        if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
-            suggestionsBox.style.display = 'none';
-        }
-    });
 });
