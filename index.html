@@ -1,178 +1,129 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>HassanChef — Indian Food Calorie Calculator</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>HassanChef — Indian Food Calorie Calculator</title>
 
-  <style>
-    *, *::before, *::after { box-sizing: border-box; }
+<!-- Styles -->
+<style>
+/* same layout styles you already used, kept clean for brevity */
+:root{
+  --accent:#b76b6b;
+  --accent-2:#e6bebe;
+  font-family: -apple-system,Roboto,Arial;
+}
+body { margin:0; background:#fff; color:#222; }
+.wrap{ max-width:980px; margin:18px auto; padding:12px; }
+.card{ background:#fff; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.06); }
+.header{ background:var(--accent); color:#fff; padding:18px; border-radius:14px 14px 0 0; }
+.row{ display:flex; gap:12px; flex-wrap:wrap; }
+.col{ flex:1; min-width:200px; }
+input,select{ width:100%; padding:10px; border-radius:10px; border:1px solid #ddd; }
+.listbox{ position:absolute; left:0; right:0; background:#fff; border:1px solid #eee; 
+          border-radius:10px; max-height:240px; overflow:auto; display:none; z-index:50; }
+.listbox button{ width:100%; background:#fff; border:0; padding:10px; text-align:left; }
+.summary-card{ background:#fff; border:1px solid var(--accent-2); border-radius:10px; padding:12px; }
 
-    :root{
-      --bg:#fff;
-      --card:#fff;
-      --accent:#b76b6b;
-      --accent-2:#e6bebe;
-      --muted:#666;
-      --radius:14px;
-      --shadow:0 8px 20px rgba(0,0,0,0.06);
-      font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial;
-    }
-
-    html,body{margin:0;padding:0;background:var(--bg);color:#222;}
-
-    .wrap{max-width:980px;margin:18px auto;padding:12px;}
-    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-    .header{
-      background:linear-gradient(180deg,var(--accent),rgba(183,107,107,0.95));
-      color:#fff;padding:18px 20px;
-    }
-    .header h1{margin:0;font-size:18px}
-    .header p{margin:6px 0 0;font-size:13px;opacity:0.95}
-
-    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
-    .col{flex:1;min-width:200px}
-
-    label{display:block;font-weight:600;margin-bottom:6px}
-    input, select{
-      width:100%;padding:10px;border-radius:10px;border:1px solid #ddd;font-size:15px;
-    }
-
-    .suggestions{position:relative}
-    .listbox{position:absolute;left:0;right:0;top:44px;background:#fff;border-radius:10px;
-            border:1px solid #eee;z-index:50;max-height:240px;overflow:auto;
-            box-shadow:0 8px 24px rgba(0,0,0,0.08);display:none;}
-    .listbox button{width:100%;padding:10px;border:0;background:#fff;text-align:left}
-
-    .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
-    .btn-primary{background:var(--accent);color:#fff}
-    .btn-ghost{background:#fff;border:1px solid #ddd}
-
-    table{width:100%;border-collapse:collapse;margin-top:14px}
-    th{background:var(--accent-2);padding:10px;text-align:left}
-    td{padding:10px;border-bottom:1px solid #f0eaea}
-
-    .summary-box{padding:14px;border-radius:12px;border:1px solid #eee;margin-top:12px}
-    .summary-card{padding:12px;border:1px solid var(--accent-2);border-radius:10px;}
-
-    .mode-btn{
-      margin:12px 0;
-      padding:10px 14px;
-      width:100%;
-      background:#fff;
-      border:2px solid var(--accent);
-      color:var(--accent);
-      font-weight:700;
-      border-radius:10px;
-      cursor:pointer;
-    }
-
-    /* POPUP */
-    .popup-bg{
-      position:fixed;left:0;top:0;width:100%;height:100%;
-      background:rgba(0,0,0,0.4);
-      display:none;justify-content:center;align-items:center;z-index:200;
-    }
-    .popup{
-      background:#fff;padding:20px;border-radius:12px;width:260px;
-      box-shadow:0 8px 24px rgba(0,0,0,0.15);
-      text-align:center;
-    }
-
-  </style>
-
+/* POPUP MODE SELECTOR */
+#modePopup {
+  position: fixed;
+  left:0; right:0; top:0; bottom:0;
+  background: rgba(0,0,0,0.5);
+  display:none;
+  align-items:center; justify-content:center;
+  z-index:200;
+}
+#popupBox {
+  background:#fff; padding:20px; border-radius:14px; width:300px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.2); text-align:center;
+}
+.popup-btn {
+  display:block; width:100%; padding:12px;
+  margin-top:10px; border-radius:10px;
+  font-size:16px; font-weight:700; cursor:pointer;
+}
+.btn-primary{ background:var(--accent); color:#fff; }
+.btn-ghost{ background:#fff; border:1px solid #ddd; }
+</style>
 </head>
+
 <body>
+
+<div id="modePopup">
+  <div id="popupBox">
+    <h3>Select Cooking Mode</h3>
+    <button class="popup-btn btn-primary" onclick="setModeHome()">Home Cooking</button>
+    <button class="popup-btn btn-ghost" onclick="setModeRestaurant()">Restaurant Style</button>
+    <button class="popup-btn btn-ghost" onclick="closePopup()">Cancel</button>
+  </div>
+</div>
 
 <div class="wrap">
   <div class="card">
-
     <div class="header">
       <h1>HassanChef — Indian Food Calorie Calculator</h1>
-      <p>Calculate calories, protein, carbs, fat & fiber</p>
+      <p id="modeLabel">Mode: Home Cooking</p>
     </div>
 
     <div class="body">
-
-      <!-- MODE SWITCH BUTTON -->
-      <button class="mode-btn" onclick="openModePopup()">Choose Mode (Home / Restaurant)</button>
-
       <div class="row">
         <div class="col">
-          <label for="search">Search ingredient</label>
-
-          <div class="suggestions">
-            <input type="text" id="search" placeholder="e.g. roti, butter naan" autocomplete="off">
+          <label>Search</label>
+          <div style="position:relative;">
+            <input id="search" autocomplete="off">
             <div id="suggestions" class="listbox"></div>
           </div>
 
-          <div style="display:flex;gap:8px;margin-top:10px;">
+          <div style="display:flex; gap:10px; margin-top:10px;">
             <div style="flex:1;">
               <label>Qty</label>
-              <input id="qty" type="number" value="1" min="0.01">
+              <input id="qty" type="number" value="1">
             </div>
-
             <div style="width:120px;">
               <label>Unit</label>
               <select id="unit">
                 <option value="serving">Serving</option>
-                <option value="g">Grams</option>
-                <option value="ml">ml</option>
+                <option value="g">Grams (g)</option>
               </select>
             </div>
           </div>
 
-          <button id="addBtn" class="btn btn-primary" style="margin-top:12px;">Add</button>
-
-          <table id="list">
-            <thead>
-              <tr>
-                <th>Item</th><th>Cal</th><th>P</th><th>C</th><th>F</th><th></th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+          <button id="addBtn" class="btn-primary" style="margin-top:10px;">Add</button>
         </div>
 
-        <div class="col" style="max-width:300px">
-          <div class="summary-box">
-            <h3>Total Nutrition</h3>
-            <div id="summary" class="muted">0 kcal</div>
+        <div class="col">
+          <div class="summary-card">
+            <h3>Total</h3>
+            <div id="summary">0 kcal</div>
+            <p>Calories: <span id="sumCal">0</span></p>
+            <p>Protein: <span id="sumProt">0</span> g</p>
+            <p>Carbs: <span id="sumCarb">0</span> g</p>
+            <p>Fat: <span id="sumFat">0</span> g</p>
 
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
-              <div class="summary-card">Cal<div id="sumCal">0</div></div>
-              <div class="summary-card">Prot<div id="sumProt">0</div></div>
-              <div class="summary-card">Carb<div id="sumCarb">0</div></div>
-              <div class="summary-card">Fat<div id="sumFat">0</div></div>
-            </div>
-
+            <button onclick="openPopup()" class="btn-ghost" style="margin-top:10px;">
+              Change Mode
+            </button>
           </div>
         </div>
       </div>
 
+      <table id="list">
+        <thead>
+          <tr><th>Item</th><th>Cal</th><th>P</th><th>C</th><th>F</th><th></th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
     </div>
-
-  </div>
-</div>
-
-<!-- POPUP UI -->
-<div class="popup-bg" id="modePopup">
-  <div class="popup">
-    <h3>Select Mode</h3>
-    <button class="btn btn-primary" onclick="setModeHome()">Home Cooking</button>
-    
   </div>
 </div>
 
 <script src="script.js"></script>
 
 <script>
-  function openModePopup(){
-      document.getElementById("modePopup").style.display = "flex";
-  }
-  function closeModePopup(){
-      document.getElementById("modePopup").style.display = "none";
-  }
+function openPopup(){ document.getElementById("modePopup").style.display="flex"; }
+function closePopup(){ document.getElementById("modePopup").style.display="none"; }
 </script>
 
 </body>
