@@ -104,6 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // SEARCH LISTENER
   searchInput.addEventListener("input", e => searchFood(e.target.value));
+ // trigger rebuild
 
   // LOAD DATA
   loadFoods();
