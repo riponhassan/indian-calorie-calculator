@@ -1,16 +1,22 @@
-# etl/update_foods.py -- demo placeholder
-# Usage: python etl/update_foods.py --out data/updates/2025-11-23.json
+import json
+import requests
 
-import os, json, argparse, datetime
-parser = argparse.ArgumentParser()
-parser.add_argument("--out", default=f"data/updates/sample-{int(datetime.datetime.utcnow().timestamp())}.json")
-args = parser.parse_args()
-os.makedirs(os.path.dirname(args.out), exist_ok=True)
-sample = {
-  "generated_at": datetime.datetime.utcnow().isoformat(),
-  "items_added": 0,
-  "note": "placeholder - replace with real ETL"
-}
-with open(args.out, "w", encoding="utf-8") as fh:
-    json.dump(sample, fh, indent=2)
-print("Wrote", args.out)
+URL = "https://raw.githubusercontent.com/riponhassan/indian-calorie-calculator/main/foods.json"
+
+def update_foods():
+    print("Fetching latest data...")
+
+    data = requests.get(URL).json()
+
+    # Example transformation — you can expand later
+    for item in data:
+        # standardize keys if needed
+        item["unit"] = item.get("unit", "serving")
+
+    with open("foods.json", "w") as f:
+        json.dump(data, f, indent=2)
+
+    print("foods.json updated.")
+
+if __name__ == "__main__":
+    update_foods()
