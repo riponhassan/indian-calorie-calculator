@@ -216,33 +216,14 @@
   </div>
   <button onclick="setModeHome()" class="btn btn-ghost">Home</button>
 <button onclick="setModeRestaurant()" class="btn btn-ghost">Restaurant</button>
-
-
- <!-- DATABASE FILES -->
-
-
-
+<!-- MODE SELECT -->
+<div style="margin:10px 0;">
+  <button onclick="setModeHome()" class="btn btn-ghost">Home</button>
+  <button onclick="setModeRestaurant()" class="btn btn-ghost">Restaurant</button>
+</div>
 
 <!-- CALCULATOR LOGIC -->
 <script src="script.js"></script>
 
 
 
-  <script>
-  function sendHeight() {
-    try {
-      const h = document.body.scrollHeight;
-      parent.postMessage({ hcHeight: h }, "*");
-    } catch (e) {}
-  }
-
-  window.addEventListener("load", sendHeight);
-  window.addEventListener("resize", sendHeight);
-
-  const obs = new MutationObserver(sendHeight);
-  obs.observe(document.body, { childList: true, subtree: true });
-
-  setInterval(sendHeight, 1500);
-  </script>
-</body>
-</html>
