@@ -1,64 +1,10 @@
-let mode = "home";   // default mode (home values)
+/**************************************************
+ HASSANCHEF – INDIAN CALORIE CALCULATOR (v2)
+ With Home/Restaurant Toggle
+**************************************************/
+
 let allFoods = [];
-
-async function loadFoods() {
-    try {
-        const res = await fetch("foods.json");
-        const data = await res.json();
-
-        // convert JSON → unified usable format
-        allFoods = data.map(item => ({
-            name: item.name,
-            unit: item.unit || "serving",
-
-            home: item.versions.home,
-            restaurant: item.versions.restaurant,
-
-            // default visible values (home)
-            calories: item.versions.home.cal,
-            protein: item.versions.home.prot,
-            carbs: item.versions.home.carb,
-            fat: item.versions.home.fat
-        }));
-
-        console.log("Loaded:", allFoods.length, "foods");
-
-    } catch (e) {
-        console.error("Error loading foods.json", e);
-    }
-}
-
-// -----------------------------------------
-
-function updateModeValues() {
-    allFoods = allFoods.map(f => {
-        let v = mode === "home" ? f.home : f.restaurant;
-
-        return {
-            ...f,
-            calories: v.cal,
-            protein: v.prot,
-            carbs: v.carb,
-            fat: v.fat
-        };
-    });
-
-    console.log("Mode changed to:", mode);
-}
-
-// -----------------------------------------
-
-function setModeHome() {
-    mode = "home";
-    updateModeValues();
-}
-
-function setModeRestaurant() {
-    mode = "restaurant";
-    updateModeValues();
-}
-
-// -----------------------------------------
+let mode = "home"; // default mode
 
 document.addEventListener("DOMContentLoaded", async () => {
 
@@ -69,88 +15,136 @@ document.addEventListener("DOMContentLoaded", async () => {
     const addBtn = document.getElementById("addBtn");
     const tableBody = document.querySelector("#list tbody");
 
-    await loadFoods();
-    updateModeValues();
+    // LOAD DATABASE
+    async function loadFoods() {
+        const response = await fetch("foods.json");
+        const data = await response.json();
 
-    // SEARCH
+        // Convert to uniform format
+        allFoods = data.map(item => ({
+            name: item.name,
+            unit: item.unit || "serving",
+            versions: item.versions
+        }));
+
+        console.log("Loaded foods:", allFoods.length);
+    }
+
+    await loadFoods();
+
+    /***********************
+     SEARCH SUGGESTIONS
+    ************************/
     function searchFood(q) {
         suggestionsBox.innerHTML = "";
-        if (q.length < 2) {
+
+        if (!q || q.length < 2) {
             suggestionsBox.style.display = "none";
             return;
         }
 
-        const qLower = q.toLowerCase();
-        const matches = allFoods.filter(f => f.name.toLowerCase().includes(qLower)).slice(0, 30);
+        const lower = q.toLowerCase();
+        let count = 0;
 
-        matches.forEach(food => {
-            let btn = document.createElement("button");
-            btn.textContent = `${food.name} (${food.calories} kcal)`;
-
-            btn.onclick = () => {
-                searchInput.value = food.name;
-                suggestionsBox.style.display = "none";
-
-                addBtn.onclick = () => addToTable(food);
-            };
-
-            suggestionsBox.appendChild(btn);
+        allFoods.forEach(food => {
+            if (count >= 30) return;
+            if (food.name.toLowerCase().includes(lower)) {
+                addSuggestion(food);
+                count++;
+            }
         });
 
-        suggestionsBox.style.display = matches.length ? "block" : "none";
+        suggestionsBox.style.display = count ? "block" : "none";
+    }
+
+    function addSuggestion(food) {
+        const btn = document.createElement("button");
+        btn.innerText = `${food.name} (${food.versions[mode].cal} kcal)`;
+
+        btn.onclick = () => {
+            searchInput.value = food.name;
+            suggestionsBox.style.display = "none";
+
+            addBtn.onclick = () => addToTable(food);
+        };
+
+        suggestionsBox.appendChild(btn);
     }
 
     searchInput.addEventListener("input", e => searchFood(e.target.value));
 
-    // ---------------------------------------
-
+    /***********************
+     ADD TO TABLE
+    ************************/
     function addToTable(food) {
         const qty = parseFloat(qtyInput.value) || 1;
         const unit = unitSelect.value;
 
-        let multiplier = (unit === "g" ? qty / 100 : qty);
+        const values = food.versions[mode];
+
+        let multiplier = qty;
+        if (unit === "g") multiplier = qty / 100;
+
+        const cal = Math.round(values.cal * multiplier);
+        const prot = (values.prot * multiplier).toFixed(1);
+        const carb = (values.carb * multiplier).toFixed(1);
+        const fat = (values.fat * multiplier).toFixed(1);
 
         const row = document.createElement("tr");
         row.innerHTML = `
-            <td>${food.name}<br><small>${qty} ${unit}</small></td>
-            <td>${Math.round(food.calories * multiplier)}</td>
-            <td>${(food.protein * multiplier).toFixed(1)}</td>
-            <td>${(food.carbs * multiplier).toFixed(1)}</td>
-            <td>${(food.fat * multiplier).toFixed(1)}</td>
+            <td>${food.name}<br><small class="muted">${qty}${unit}</small></td>
+            <td>${cal}</td>
+            <td>${prot}</td>
+            <td>${carb}</td>
+            <td>${fat}</td>
             <td><button class="remove-btn">❌</button></td>
         `;
 
         row.querySelector(".remove-btn").onclick = () => {
             row.remove();
-            updateTotals();
+            updateSummary();
         };
 
         tableBody.appendChild(row);
-        updateTotals();
+        updateSummary();
 
         searchInput.value = "";
         qtyInput.value = 1;
     }
 
-    // ---------------------------------------
-
-    function updateTotals() {
-        let totalCal = 0, totalP = 0, totalC = 0, totalF = 0;
+    /***********************
+     UPDATE TOTALS
+    ************************/
+    function updateSummary() {
+        let c = 0, p = 0, carb = 0, f = 0;
 
         document.querySelectorAll("#list tbody tr").forEach(row => {
-            const cols = row.querySelectorAll("td");
-            totalCal += parseFloat(cols[1].textContent);
-            totalP += parseFloat(cols[2].textContent);
-            totalC += parseFloat(cols[3].textContent);
-            totalF += parseFloat(cols[4].textContent);
+            const t = row.querySelectorAll("td");
+            c += parseFloat(t[1].innerText);
+            p += parseFloat(t[2].innerText);
+            carb += parseFloat(t[3].innerText);
+            f += parseFloat(t[4].innerText);
         });
 
-        document.getElementById("sumCal").innerText = totalCal;
-        document.getElementById("sumProt").innerText = totalP.toFixed(1);
-        document.getElementById("sumCarb").innerText = totalC.toFixed(1);
-        document.getElementById("sumFat").innerText = totalF.toFixed(1);
-        document.getElementById("summary").innerText = `${totalCal} kcal`;
+        document.getElementById("sumCal").innerText = Math.round(c);
+        document.getElementById("sumProt").innerText = p.toFixed(1);
+        document.getElementById("sumCarb").innerText = carb.toFixed(1);
+        document.getElementById("sumFat").innerText = f.toFixed(1);
+        document.getElementById("summary").innerText = `${Math.round(c)} kcal`;
     }
-
 });
+
+/**************************************************
+   MODE SWITCHING — WORKS NOW
+**************************************************/
+
+function setModeHome() {
+    mode = "home";
+    alert("✔ Switched to HOME cooking values");
+}
+
+function setModeRestaurant() {
+    mode = "restaurant";
+    alert("✔ Switched to RESTAURANT cooking values");
+}
 
