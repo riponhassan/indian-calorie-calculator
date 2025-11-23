@@ -1,81 +1,85 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>HassanChef — Indian Food Calorie Calculator</title>
 
 <style>
-/* ====== GLOBAL ====== */
+/* ============ CLEAN ORIGINAL DESIGN ============ */
 :root{
-  --bg:#fff;
-  --card:#fff;
   --accent:#b76b6b;
-  --accent-2:#e6bebe;
+  --accent2:#e6bebe;
   --muted:#666;
   --radius:14px;
-  --shadow: 0 8px 20px rgba(0,0,0,0.06);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
+  font-family: -apple-system,Roboto,Arial;
 }
 
-body { margin:0;background:#fff;color:#222; }
-.wrap { max-width:980px;margin:18px auto;padding:12px; }
+body{margin:0;padding:0;background:#fff;color:#222;}
+.wrap{max-width:980px;margin:18px auto;padding:12px;}
 
-/* ====== CARD ====== */
-.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.card{background:#fff;border-radius:var(--radius);box-shadow:0 8px 20px rgba(0,0,0,0.06);overflow:hidden;}
+
 .header{
-  background:linear-gradient(180deg,var(--accent),rgba(183,107,107,0.95));
-  color:#fff;padding:18px 20px;
+  background:linear-gradient(180deg,var(--accent),#b76b6b);
+  padding:20px;color:#fff;
 }
-.header h1{margin:0;font-size:18px}
-.header p{margin:6px 0 0;font-size:13px}
+.header h1{margin:0;font-size:20px;}
+.header p{margin:6px 0 0;font-size:13px;}
 
 .body{padding:16px;}
-.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
-.col{flex:1;min-width:180px}
 
-label{font-weight:600;margin-bottom:6px;display:block}
+label{font-weight:600;margin-bottom:6px;display:block;}
 
-/* Inputs */
+.row{display:flex;gap:12px;flex-wrap:wrap;}
+
+.col{flex:1;min-width:220px;}
+
 input,select{
-  width:100%;padding:10px 12px;border-radius:10px;border:1px solid #eee;
-  font-size:15px;
+  width:100%;padding:10px;border-radius:10px;
+  border:1px solid #eee;font-size:15px;
 }
 
-/* Autocomplete */
-.suggestions{position:relative}
+.actions{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;}
+
+.btn{
+  padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:700;
+}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-ghost{background:#fff;border:1px solid #ddd;}
+
 .listbox{
-  position:absolute;left:0;right:0;top:44px;background:#fff;border:1px solid #eee;
-  border-radius:10px;max-height:240px;overflow:auto;display:none;z-index:50;
+  position:absolute;left:0;right:0;top:44px;
+  background:#fff;border:1px solid #eee;border-radius:10px;display:none;
+  max-height:250px;overflow:auto;z-index:50;
 }
 .listbox button{
-  display:block;width:100%;padding:10px 12px;text-align:left;
-  background:#fff;border:0;border-bottom:1px solid #f7e7e7;font-size:15px;
+  width:100%;padding:10px;text-align:left;border:0;background:#fff;
+  border-bottom:1px solid #f5f5f5;cursor:pointer;
 }
 
-/* Buttons */
-.btn{padding:10px 14px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
-.btn-primary{background:var(--accent);color:#fff}
-.btn-ghost{background:#fff;border:1px solid #eee}
+.summary-box{margin-top:12px;border:1px solid #eee;border-radius:12px;padding:14px;}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.summary-card{border:1px solid var(--accent2);padding:12px;border-radius:12px;font-weight:700;}
 
-/* Summary */
-.summary-box{padding:14px;border:1px solid #faf0f0;border-radius:12px}
-.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.summary-card{padding:12px;border-radius:10px;border:1px solid var(--accent-2)}
-.muted{color:var(--muted);font-size:13px}
+.table-box{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;margin-top:10px;}
+thead th{background:var(--accent2);padding:10px;border-radius:6px;}
+td{padding:10px;border-bottom:1px solid #f1f1f1;}
 
-/* ===== POPUP ===== */
-.mode-popup{
-  position:fixed;left:0;right:0;top:0;bottom:0;background:rgba(0,0,0,0.45);
-  display:flex;justify-content:center;align-items:center;z-index:200;display:none;
+.remove-btn{background:none;border:0;color:#999;font-size:14px;cursor:pointer;}
+
+/* ============ MODE POPUP ============ */
+#modePopup{
+  position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);
+  display:none;align-items:center;justify-content:center;z-index:100;
 }
-.mode-box{
+#modeBox{
   background:#fff;padding:20px;border-radius:14px;width:260px;text-align:center;
-  box-shadow:0 10px 35px rgba(0,0,0,0.2);
+  box-shadow:0 8px 30px rgba(0,0,0,0.2);
 }
-.mode-box h3{margin-top:0;margin-bottom:14px;font-size:18px}
-.mode-box button{width:100%;margin-top:10px}
-
+#modeBox h3{margin:0 0 12px;}
 </style>
 </head>
 
@@ -83,62 +87,72 @@ input,select{
 
 <div class="wrap">
   <div class="card">
+
     <div class="header">
-      <h1>HassanChef — Indian Food Calorie Calculator</h1>
-      <p>Calculate calories, protein, carbs, fat & fibre</p>
+      <h1>HassanChef — Indian Calorie Calculator</h1>
+      <p>Calories, protein, carbs & fat — per recipe & per serving</p>
     </div>
 
     <div class="body">
       <div class="row">
 
+        <!-- LEFT SIDE -->
         <div class="col">
-          <label>Search ingredient</label>
-          <div class="suggestions">
-            <input type="text" id="search" placeholder="Type e.g. roti, butter naan">
+          <label>Search Ingredient</label>
+          <div style="position:relative;">
+            <input id="search" type="text" placeholder="Type e.g. roti, paneer 100g">
             <div id="suggestions" class="listbox"></div>
           </div>
 
-          <div style="display:flex;gap:8px;margin-top:10px;">
+          <div style="display:flex;gap:10px;margin-top:10px;">
             <div style="flex:1;">
               <label>Qty</label>
               <input id="qty" type="number" value="1" step="0.01">
             </div>
-
             <div style="width:120px;">
               <label>Unit</label>
               <select id="unit">
                 <option value="serving">Serving</option>
-                <option value="g">Grams</option>
+                <option value="g">Grams (g)</option>
                 <option value="ml">ml</option>
               </select>
             </div>
           </div>
 
-          <div class="actions" style="margin-top:12px;display:flex;gap:10px;">
-            <button class="btn btn-primary" id="addBtn">Add to list</button>
-            <button class="btn btn-ghost" id="chooseMode">Mode</button>
+          <div class="actions">
+            <button id="addBtn" class="btn btn-primary">Add to list</button>
+            <button id="modeBtn" class="btn btn-ghost">Mode</button>
           </div>
 
-          <table id="list" style="width:100%;margin-top:14px;border-collapse:collapse;">
-            <thead>
-              <tr style="background:var(--accent-2);">
-                <th>Item</th><th>Cal</th><th>Prot</th><th>Carb</th><th>Fat</th><th></th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+          <div class="table-box">
+            <table id="list">
+              <thead>
+                <tr>
+                  <th>Item</th><th>Cal</th><th>Prot</th><th>Carb</th><th>Fat</th><th></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
 
         </div>
 
-        <div class="col" style="max-width:360px;">
+        <!-- RIGHT SIDE -->
+        <div class="col">
           <div class="summary-box">
             <h3>Total Nutrition</h3>
-            <div id="summary" class="muted">0 kcal</div>
-            <div class="summary-grid" style="margin-top:10px">
+            <div id="summary" style="font-size:18px;margin-top:6px;">0 kcal</div>
+
+            <div class="summary-grid" style="margin-top:10px;">
               <div class="summary-card">Calories <div id="sumCal">0</div></div>
               <div class="summary-card">Protein (g) <div id="sumProt">0</div></div>
               <div class="summary-card">Carbs (g) <div id="sumCarb">0</div></div>
               <div class="summary-card">Fat (g) <div id="sumFat">0</div></div>
+            </div>
+
+            <div style="margin-top:12px;">
+              <label>Servings</label>
+              <input id="servings" type="number" value="1" min="1">
             </div>
           </div>
         </div>
@@ -149,23 +163,16 @@ input,select{
   </div>
 </div>
 
-<!-- POPUP -->
-<div id="modePopup" class="mode-popup">
-  <div class="mode-box">
+<!-- MODE POPUP -->
+<div id="modePopup">
+  <div id="modeBox">
     <h3>Select Mode</h3>
-    <button onclick="setModeHome()" class="btn btn-primary">Home Cooking</button>
-    <button onclick="setModeRestaurant()" class="btn btn-ghost">Restaurant Style</button>
+    <button onclick="setMode('home')" class="btn btn-primary" style="width:100%;margin-bottom:10px;">Home Cooking</button>
+    <button onclick="setMode('restaurant')" class="btn btn-ghost" style="width:100%;">Restaurant Style</button>
   </div>
 </div>
 
-<!-- SCRIPT -->
 <script src="script.js"></script>
-
-<script>
-document.getElementById("chooseMode").onclick = () => {
-    document.getElementById("modePopup").style.display = "flex";
-};
-</script>
 
 </body>
 </html>
