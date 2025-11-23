@@ -1,9 +1,12 @@
 /* ===========================================================
    HASSAN CHEF — INDIAN CALORIE CALCULATOR
-   MASTER FOOD DATABASE (Fixed Version)
+   MASTER FOOD DATABASE (Final Merged Version)
    =========================================================== */
 
-var foodDB = {}; 
+// DO NOT REDECLARE foodDB if it already exists
+if (typeof foodDB === "undefined") {
+    var foodDB = {};
+}
 
 /* ---------------------------------------------
    0) BASE DATABASE
@@ -38,8 +41,12 @@ var megaFoods = {
   "shahi paneer": { display:"Shahi Paneer", versions:{ restaurant:{cal:520,prot:16,carb:20,fat:38}, home:{cal:400,prot:15,carb:18,fat:26} } },
   "paneer lababdar": { display:"Paneer Lababdar", versions:{ restaurant:{cal:550,prot:18,carb:22,fat:40}, home:{cal:420,prot:17,carb:20,fat:28} } },
   "paneer do pyaza": { display:"Paneer Do Pyaza", versions:{ restaurant:{cal:460,prot:18,carb:18,fat:32}, home:{cal:350,prot:16,carb:16,fat:20} } }
-  // Add your other items here if needed, making sure they are ONE line each.
 };
 
-// MERGE EVERYTHING
+/* ---------------------------------------------
+   3) MERGE ALL DATABASES SAFELY
+--------------------------------------------- */
 Object.assign(foodDB, baseFoods, extendedFoods, megaFoods);
+
+console.log("Loaded total food items:", Object.keys(foodDB).length);
+
