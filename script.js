@@ -1,82 +1,157 @@
 document.addEventListener('DOMContentLoaded', async () => {
     
-    // 1. DEFINE VARIABLES
+    // --- 1. SETUP VARIABLES ---
     let allFoods = [];
-    const searchInput = document.getElementById('searchInput'); // Ensure your HTML input has id="searchInput"
-    const resultsBox = document.getElementById('resultsBox');   // Ensure your HTML results div has id="resultsBox"
+    const searchInput = document.getElementById('search');      // Matches your HTML id="search"
+    const suggestionsBox = document.getElementById('suggestions'); // Matches your HTML id="suggestions"
+    const qtyInput = document.getElementById('qty');
+    const unitSelect = document.getElementById('unit');
+    const addBtn = document.getElementById('addBtn');
+    const tableBody = document.querySelector('#list tbody');
     
-    // 2. LOAD DATA
+    // --- 2. LOAD DATA ---
     async function loadFoods() {
         try {
-            // A. Load Local/Indian Foods (if they exist in foods.js)
-            // We try to grab them from the window object if defined
-            const localFoods = typeof foods !== 'undefined' ? foods : [];
+            // A. Get local foods (from foods.js/foods_base.js if they exist)
+            // We check multiple variable names just in case
+            let localData = [];
+            if (typeof foods !== 'undefined') localData = foods;
+            else if (typeof foodList !== 'undefined') localData = foodList;
 
-            // B. Fetch the External JSON file we just created
-            // Note: We use 'relative path' which works automatically on your website
+            // B. Fetch external JSON
             const response = await fetch('foods.json');
-            const externalFoods = await response.json();
+            const externalData = await response.json();
 
             // C. Combine them
-            allFoods = [...localFoods, ...externalFoods];
-            console.log(`Loaded ${allFoods.length} total foods.`);
+            allFoods = [...localData, ...externalData];
+            console.log(`Chef's Kitchen Ready: ${allFoods.length} ingredients loaded.`);
 
         } catch (error) {
-            console.error("Error loading foods:", error);
-            // Fallback: if fetch fails, just use local foods
+            console.error("Error loading pantry:", error);
+            // Fallback to local only
             if (typeof foods !== 'undefined') allFoods = foods;
         }
     }
 
-    // 3. SEARCH FUNCTION (Optimized for large lists)
+    // --- 3. SEARCH FUNCTION ---
     function searchFood(query) {
-        resultsBox.innerHTML = ''; // Clear previous results
+        suggestionsBox.innerHTML = ''; // Clear list
         
-        if (!query) return;
-        
+        if (!query || query.length < 2) {
+            suggestionsBox.style.display = 'none';
+            return;
+        }
+
         const lowerQuery = query.toLowerCase();
-        let matchCount = 0;
+        let count = 0;
 
-        // Loop through all foods
         for (const food of allFoods) {
-            // Stop after 50 results to prevent freezing
-            if (matchCount >= 50) break;
+            if (count >= 50) break; // Stop after 50 matches to keep it fast
 
-            if (food.name.toLowerCase().includes(lowerQuery)) {
-                displayFoodItem(food);
-                matchCount++;
+            // Check if name exists and matches
+            if (food.name && food.name.toLowerCase().includes(lowerQuery)) {
+                showSuggestion(food);
+                count++;
             }
         }
+
+        suggestionsBox.style.display = count > 0 ? 'block' : 'none';
     }
 
-    // 4. DISPLAY FUNCTION (You may need to adjust HTML to match your design)
-    function displayFoodItem(food) {
-        const div = document.createElement('div');
-        div.className = 'food-item'; // Use your CSS class here
-        div.style.cursor = 'pointer';
-        div.style.padding = '10px';
-        div.style.borderBottom = '1px solid #eee';
-        div.innerText = `${food.name} - ${food.calories} kcal`;
+    // --- 4. SHOW SUGGESTION ---
+    function showSuggestion(food) {
+        const btn = document.createElement('button');
+        // Display name and calories per 100g/serving
+        const unitLabel = food.unit || 'serving';
+        btn.innerText = `${food.name} (${food.calories} kcal / ${unitLabel})`;
         
-        // When clicked, add to list (You likely have an 'addFood' function in another file)
-        div.onclick = () => {
-            if (typeof addFood === 'function') {
-                addFood(food); // Call your existing logic
-            } else {
-                alert(`You selected: ${food.name}`);
-            }
-            resultsBox.innerHTML = ''; // Clear search
-            searchInput.value = '';
+        btn.onclick = () => {
+            searchInput.value = food.name; // Fill input
+            suggestionsBox.style.display = 'none'; // Hide list
+            
+            // Auto-fill the add function with this food's data
+            // (We store the selected food in the button for easy access)
+            addBtn.onclick = () => addToTable(food);
+        };
+        
+        suggestionsBox.appendChild(btn);
+    }
+
+    // --- 5. ADD TO TABLE LOGIC ---
+    function addToTable(food) {
+        const qty = parseFloat(qtyInput.value) || 1;
+        const unit = unitSelect.value; 
+
+        // Calculate Multiplier
+        // Note: You may need to adjust this logic based on your specific data units
+        let multiplier = qty;
+        
+        // Simple logic: If data is per 100g and user selected 'g', divide by 100
+        if (unit === 'g') {
+             multiplier = qty / 100;
+        }
+
+        const totalCal = Math.round(food.calories * multiplier);
+        const totalProt = (food.protein * multiplier).toFixed(1);
+        const totalCarb = (food.carbs * multiplier).toFixed(1);
+        const totalFat = (food.fat * multiplier).toFixed(1);
+
+        // Create Row
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${food.name} <br><small class="muted">${qty}${unit}</small></td>
+            <td>${totalCal}</td>
+            <td>${totalProt}</td>
+            <td>${totalCarb}</td>
+            <td>${totalFat}</td>
+            <td><button class="remove-btn">❌</button></td>
+        `;
+
+        // Remove Button Logic
+        row.querySelector('.remove-btn').onclick = () => {
+            row.remove();
+            updateTotal();
         };
 
-        resultsBox.appendChild(div);
+        tableBody.appendChild(row);
+        updateTotal(); // Update bottom totals
+        
+        // Reset search
+        searchInput.value = '';
+        qtyInput.value = '1';
     }
 
-    // 5. START EVERYTHING
+    // --- 6. UPDATE TOTALS ---
+    function updateTotal() {
+        let c=0, p=0, carb=0, f=0;
+        
+        // Loop through all table rows
+        document.querySelectorAll('#list tbody tr').forEach(row => {
+            const cols = row.querySelectorAll('td');
+            c += parseFloat(cols[1].innerText);
+            p += parseFloat(cols[2].innerText);
+            carb += parseFloat(cols[3].innerText);
+            f += parseFloat(cols[4].innerText);
+        });
+
+        // Update HTML
+        document.getElementById('sumCal').innerText = Math.round(c);
+        document.getElementById('sumProt').innerText = p.toFixed(1);
+        document.getElementById('sumCarb').innerText = carb.toFixed(1);
+        document.getElementById('sumFat').innerText = f.toFixed(1);
+        document.getElementById('summary').innerText = `${Math.round(c)} kcal`;
+    }
+
+    // --- START ---
     await loadFoods();
-
-    // Listen for typing
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => searchFood(e.target.value));
-    }
+    
+    // Listeners
+    searchInput.addEventListener('input', (e) => searchFood(e.target.value));
+    
+    // Hide suggestions if clicking outside
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+            suggestionsBox.style.display = 'none';
+        }
+    });
 });
