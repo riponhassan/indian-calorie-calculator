@@ -9,17 +9,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tableBody = document.querySelector('#list tbody');
     const servingsInput = document.getElementById('servings');
 
-    // LOAD FOODS.JSON
-    async function loadFoods() {
-        try {
-            const response = await fetch('foods.json?v=' + Date.now());
-            allFoods = await response.json();
+   // C. Convert JSON to uniform format
+allFoods = externalData.map(item => {
+    return {
+        name: item.name,
+        unit: item.unit || "serving",
+        home: item.versions.home,
+        restaurant: item.versions.restaurant,
 
-            console.log("Chef's Kitchen Ready:", allFoods.length, "ingredients loaded.");
-        } catch (e) {
-            console.error("❌ Error loading foods.json", e);
-        }
-    }
+        // Default displayed calories = home
+        calories: item.versions.home.cal,
+        protein: item.versions.home.prot,
+        carbs: item.versions.home.carb,
+        fat: item.versions.home.fat
+    };
+});
+
+console.log("Chef's Kitchen Ready:", allFoods.length, "ingredients loaded.");
+
 
     // SEARCH
     function searchFood(q) {
