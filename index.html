@@ -5,125 +5,166 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>HassanChef — Indian Food Calorie Calculator</title>
 
-<!-- Styles -->
 <style>
-/* same layout styles you already used, kept clean for brevity */
+/* ====== GLOBAL ====== */
 :root{
+  --bg:#fff;
+  --card:#fff;
   --accent:#b76b6b;
   --accent-2:#e6bebe;
-  font-family: -apple-system,Roboto,Arial;
+  --muted:#666;
+  --radius:14px;
+  --shadow: 0 8px 20px rgba(0,0,0,0.06);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
 }
-body { margin:0; background:#fff; color:#222; }
-.wrap{ max-width:980px; margin:18px auto; padding:12px; }
-.card{ background:#fff; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.06); }
-.header{ background:var(--accent); color:#fff; padding:18px; border-radius:14px 14px 0 0; }
-.row{ display:flex; gap:12px; flex-wrap:wrap; }
-.col{ flex:1; min-width:200px; }
-input,select{ width:100%; padding:10px; border-radius:10px; border:1px solid #ddd; }
-.listbox{ position:absolute; left:0; right:0; background:#fff; border:1px solid #eee; 
-          border-radius:10px; max-height:240px; overflow:auto; display:none; z-index:50; }
-.listbox button{ width:100%; background:#fff; border:0; padding:10px; text-align:left; }
-.summary-card{ background:#fff; border:1px solid var(--accent-2); border-radius:10px; padding:12px; }
 
-/* POPUP MODE SELECTOR */
-#modePopup {
-  position: fixed;
-  left:0; right:0; top:0; bottom:0;
-  background: rgba(0,0,0,0.5);
-  display:none;
-  align-items:center; justify-content:center;
-  z-index:200;
+body { margin:0;background:#fff;color:#222; }
+.wrap { max-width:980px;margin:18px auto;padding:12px; }
+
+/* ====== CARD ====== */
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.header{
+  background:linear-gradient(180deg,var(--accent),rgba(183,107,107,0.95));
+  color:#fff;padding:18px 20px;
 }
-#popupBox {
-  background:#fff; padding:20px; border-radius:14px; width:300px;
-  box-shadow:0 6px 20px rgba(0,0,0,0.2); text-align:center;
+.header h1{margin:0;font-size:18px}
+.header p{margin:6px 0 0;font-size:13px}
+
+.body{padding:16px;}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.col{flex:1;min-width:180px}
+
+label{font-weight:600;margin-bottom:6px;display:block}
+
+/* Inputs */
+input,select{
+  width:100%;padding:10px 12px;border-radius:10px;border:1px solid #eee;
+  font-size:15px;
 }
-.popup-btn {
-  display:block; width:100%; padding:12px;
-  margin-top:10px; border-radius:10px;
-  font-size:16px; font-weight:700; cursor:pointer;
+
+/* Autocomplete */
+.suggestions{position:relative}
+.listbox{
+  position:absolute;left:0;right:0;top:44px;background:#fff;border:1px solid #eee;
+  border-radius:10px;max-height:240px;overflow:auto;display:none;z-index:50;
 }
-.btn-primary{ background:var(--accent); color:#fff; }
-.btn-ghost{ background:#fff; border:1px solid #ddd; }
+.listbox button{
+  display:block;width:100%;padding:10px 12px;text-align:left;
+  background:#fff;border:0;border-bottom:1px solid #f7e7e7;font-size:15px;
+}
+
+/* Buttons */
+.btn{padding:10px 14px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-ghost{background:#fff;border:1px solid #eee}
+
+/* Summary */
+.summary-box{padding:14px;border:1px solid #faf0f0;border-radius:12px}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.summary-card{padding:12px;border-radius:10px;border:1px solid var(--accent-2)}
+.muted{color:var(--muted);font-size:13px}
+
+/* ===== POPUP ===== */
+.mode-popup{
+  position:fixed;left:0;right:0;top:0;bottom:0;background:rgba(0,0,0,0.45);
+  display:flex;justify-content:center;align-items:center;z-index:200;display:none;
+}
+.mode-box{
+  background:#fff;padding:20px;border-radius:14px;width:260px;text-align:center;
+  box-shadow:0 10px 35px rgba(0,0,0,0.2);
+}
+.mode-box h3{margin-top:0;margin-bottom:14px;font-size:18px}
+.mode-box button{width:100%;margin-top:10px}
+
 </style>
 </head>
 
 <body>
 
-<div id="modePopup">
-  <div id="popupBox">
-    <h3>Select Cooking Mode</h3>
-    <button class="popup-btn btn-primary" onclick="setModeHome()">Home Cooking</button>
-    <button class="popup-btn btn-ghost" onclick="setModeRestaurant()">Restaurant Style</button>
-    <button class="popup-btn btn-ghost" onclick="closePopup()">Cancel</button>
-  </div>
-</div>
-
 <div class="wrap">
   <div class="card">
     <div class="header">
       <h1>HassanChef — Indian Food Calorie Calculator</h1>
-      <p id="modeLabel">Mode: Home Cooking</p>
+      <p>Calculate calories, protein, carbs, fat & fibre</p>
     </div>
 
     <div class="body">
       <div class="row">
+
         <div class="col">
-          <label>Search</label>
-          <div style="position:relative;">
-            <input id="search" autocomplete="off">
+          <label>Search ingredient</label>
+          <div class="suggestions">
+            <input type="text" id="search" placeholder="Type e.g. roti, butter naan">
             <div id="suggestions" class="listbox"></div>
           </div>
 
-          <div style="display:flex; gap:10px; margin-top:10px;">
+          <div style="display:flex;gap:8px;margin-top:10px;">
             <div style="flex:1;">
               <label>Qty</label>
-              <input id="qty" type="number" value="1">
+              <input id="qty" type="number" value="1" step="0.01">
             </div>
+
             <div style="width:120px;">
               <label>Unit</label>
               <select id="unit">
                 <option value="serving">Serving</option>
-                <option value="g">Grams (g)</option>
+                <option value="g">Grams</option>
+                <option value="ml">ml</option>
               </select>
             </div>
           </div>
 
-          <button id="addBtn" class="btn-primary" style="margin-top:10px;">Add</button>
+          <div class="actions" style="margin-top:12px;display:flex;gap:10px;">
+            <button class="btn btn-primary" id="addBtn">Add to list</button>
+            <button class="btn btn-ghost" id="chooseMode">Mode</button>
+          </div>
+
+          <table id="list" style="width:100%;margin-top:14px;border-collapse:collapse;">
+            <thead>
+              <tr style="background:var(--accent-2);">
+                <th>Item</th><th>Cal</th><th>Prot</th><th>Carb</th><th>Fat</th><th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+
         </div>
 
-        <div class="col">
-          <div class="summary-card">
-            <h3>Total</h3>
-            <div id="summary">0 kcal</div>
-            <p>Calories: <span id="sumCal">0</span></p>
-            <p>Protein: <span id="sumProt">0</span> g</p>
-            <p>Carbs: <span id="sumCarb">0</span> g</p>
-            <p>Fat: <span id="sumFat">0</span> g</p>
-
-            <button onclick="openPopup()" class="btn-ghost" style="margin-top:10px;">
-              Change Mode
-            </button>
+        <div class="col" style="max-width:360px;">
+          <div class="summary-box">
+            <h3>Total Nutrition</h3>
+            <div id="summary" class="muted">0 kcal</div>
+            <div class="summary-grid" style="margin-top:10px">
+              <div class="summary-card">Calories <div id="sumCal">0</div></div>
+              <div class="summary-card">Protein (g) <div id="sumProt">0</div></div>
+              <div class="summary-card">Carbs (g) <div id="sumCarb">0</div></div>
+              <div class="summary-card">Fat (g) <div id="sumFat">0</div></div>
+            </div>
           </div>
         </div>
+
       </div>
-
-      <table id="list">
-        <thead>
-          <tr><th>Item</th><th>Cal</th><th>P</th><th>C</th><th>F</th><th></th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-
     </div>
+
   </div>
 </div>
 
+<!-- POPUP -->
+<div id="modePopup" class="mode-popup">
+  <div class="mode-box">
+    <h3>Select Mode</h3>
+    <button onclick="setModeHome()" class="btn btn-primary">Home Cooking</button>
+    <button onclick="setModeRestaurant()" class="btn btn-ghost">Restaurant Style</button>
+  </div>
+</div>
+
+<!-- SCRIPT -->
 <script src="script.js"></script>
 
 <script>
-function openPopup(){ document.getElementById("modePopup").style.display="flex"; }
-function closePopup(){ document.getElementById("modePopup").style.display="none"; }
+document.getElementById("chooseMode").onclick = () => {
+    document.getElementById("modePopup").style.display = "flex";
+};
 </script>
 
 </body>
