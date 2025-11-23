@@ -1,229 +1,190 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <style>
-  /* Make the whole layout mobile friendly */
-  *, *::before, *::after { box-sizing: border-box; }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-  /* Main card/container */
-  .hc-container {
-    max-width: 900px;
-    margin: 16px auto;
-    padding: 18px;
-    background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 6px 22px rgba(0,0,0,0.06);
-  }
+<title>HassanChef — Indian Food Calorie Calculator</title>
+<meta name="description" content="Free Indian food calorie calculator — calculate calories, protein, carbs and fat for Indian home & restaurant dishes.">
 
-  /* Make rows flexible */
-  .row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
+<style>
+/* ========= GLOBAL STYLES ========= */
+*, *::before, *::after { box-sizing: border-box; }
+:root{
+  --bg:#fff;
+  --card:#fff;
+  --accent:#b76b6b;
+  --accent-2:#e6bebe;
+  --muted:#666;
+  --radius:14px;
+  --shadow: 0 8px 20px rgba(0,0,0,0.06);
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+}
 
-  .row .input {
-    flex: 1 1 220px;
-    min-width: 140px;
-  }
+html,body{margin:0;padding:0;background:var(--bg);color:#222;}
+.wrap{max-width:980px;margin:18px auto;padding:12px;}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
 
-  /* Stack buttons on mobile */
-  .btn-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  .btn-group button {
-    flex: 1 1 100%;
-    padding: 12px;
-    border-radius: 10px;
-    font-weight: 600;
-  }
+/* ========= HEADER ========= */
+.header{
+  background:linear-gradient(180deg,var(--accent) 0%, rgba(183,107,107,0.95) 100%);
+  color:#fff;padding:18px 20px;
+}
+.header h1{margin:0;font-size:18px;}
+.header p{margin:6px 0 0;font-size:13px;opacity:0.95}
 
-  /* Summary grid responsive */
-  .summary-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  .summary-card {
-    flex: 1 1 160px;
-    min-width: 160px;
-    background: #f7e7e7;
-    border-radius: 12px;
-    padding: 12px;
-  }
+/* ========= BODY ========= */
+.body{padding:16px;}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.col{flex:1;min-width:180px}
+label{display:block;font-weight:600;margin-bottom:6px}
+input, select{
+  width:100%;padding:10px;border-radius:10px;
+  border:1px solid #eee;font-size:15px;
+}
 
-  /* Table horizontal scroll safe */
-  .table-box {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
+.suggestions{position:relative}
+.listbox{
+  position:absolute;left:0;right:0;top:44px;background:#fff;border-radius:10px;
+  border:1px solid #eee;z-index:50;max-height:240px;overflow:auto;
+  box-shadow:0 8px 24px rgba(0,0,0,0.08);display:none;
+}
+.listbox button{
+  display:block;width:100%;text-align:left;padding:10px 12px;background:#fff;
+  border:0;border-bottom:1px solid #faf0f0;font-size:15px;
+}
 
-  @media(max-width: 520px){
-    .hc-container { padding: 14px; margin: 12px; }
-    .btn-group button { font-size: 15px; }
-  }
-  </style>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>HassanChef — Indian Food Calorie Calculator</title>
-  <meta name="description" content="Free Indian food calorie calculator — enter common Indian foods, get calories, protein, carbs and fat per recipe and per serving." />
-  <style>
-    :root{
-      --bg:#fff;
-      --card:#fff;
-      --accent:#b76b6b; /* light maroon */
-      --accent-2:#e6bebe;
-      --muted:#666;
-      --radius:14px;
-      --shadow: 0 8px 20px rgba(0,0,0,0.06);
-      font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial;
-    }
-    html,body{margin:0;padding:0;background:var(--bg);color:#222;}
-    .wrap{max-width:980px;margin:18px auto;padding:12px;}
-    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-    .header{
-      background:linear-gradient(180deg,var(--accent) 0%, rgba(183,107,107,0.95) 100%);
-      color:#fff;padding:18px 20px;border-radius:var(--radius) var(--radius) 0 0;
-    }
-    .header h1{margin:0;font-size:18px;letter-spacing:0.2px}
-    .header p{margin:6px 0 0;font-size:13px;opacity:0.95}
-    .body{padding:16px;}
-    .row{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
-    .col{flex:1;min-width:180px}
-    label{display:block;font-weight:600;margin-bottom:6px}
-    input[type="text"], input[type="number"], select{
-      width:100%;padding:10px 12px;border-radius:10px;border:1px solid #eee;box-sizing:border-box;font-size:15px;
-    }
-    .suggestions{position:relative}
-    .listbox{position:absolute;left:0;right:0;top:44px;background:#fff;border-radius:10px;border:1px solid #eee;z-index:50;max-height:240px;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,0.08)}
-    .listbox button{display:block;width:100%;text-align:left;padding:10px 12px;border:0;background:transparent;border-bottom:1px solid #faf0f0;font-size:15px}
-    .listbox button:last-child{border-bottom:0}
-    .actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
-    .btn{padding:10px 14px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
-    .btn-primary{background:var(--accent);color:#fff;box-shadow:0 6px 14px rgba(183,107,107,0.18)}
-    .btn-ghost{background:#fff;border:1px solid #eee}
-    table{width:100%;border-collapse:collapse;margin-top:14px}
-    thead th{background:var(--accent-2);padding:10px;border-radius:6px;font-weight:700;text-align:left}
-    tbody td{padding:10px;border-bottom:1px solid #f5f5f5}
-    .summary-box{background:linear-gradient(180deg,#fff,#fff);padding:14px;border-radius:12px;margin-top:12px;border:1px solid #faf0f0}
-    .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .summary-card{background:#fff;border-radius:10px;padding:12px;border:1px solid var(--accent-2);font-weight:700}
-    .mobile-sticky{
-      position:fixed;left:12px;right:12px;bottom:12px;background:#fff;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);
-      padding:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;z-index:60
-    }
-    .muted{color:var(--muted);font-size:13px}
-    /* Responsive tweaks */
-    @media (max-width:640px){
-      .wrap{padding:10px}
-      thead th{font-size:13px}
-      .row{gap:8px}
-      .header h1{font-size:16px}
-      .listbox{top:44px}
-      .summary-grid{grid-template-columns:1fr}
-    }
-    .hint{font-size:13px;color:var(--muted);margin-top:8px}
-    .small{font-size:13px}
-    .remove-btn{background:transparent;border:0;color:#999;cursor:pointer;font-size:13px}
-  </style>
+.actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.btn{
+  padding:10px 14px;border-radius:10px;border:0;font-weight:700;cursor:pointer
+}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-ghost{background:#fff;border:1px solid #eee}
+
+table{width:100%;border-collapse:collapse;margin-top:14px}
+thead th{background:var(--accent-2);padding:10px;border-radius:6px;text-align:left}
+tbody td{padding:10px;border-bottom:1px solid #f5f5f5}
+.remove-btn{background:transparent;border:0;color:#999;cursor:pointer}
+
+/* ========= SUMMARY ========= */
+.summary-box{padding:14px;border-radius:12px;border:1px solid #faf0f0}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.summary-card{
+  padding:12px;border-radius:10px;border:1px solid var(--accent-2);font-weight:700;
+}
+
+/* ========= POPUP ========= */
+#modePopup{
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,0.5);display:none;
+  justify-content:center;align-items:center;z-index:2000;
+}
+.popup-box{
+  background:#fff;padding:20px;border-radius:12px;max-width:320px;width:90%;
+  text-align:center;box-shadow:0 8px 24px rgba(0,0,0,0.12);
+}
+.popup-box button{
+  width:100%;padding:12px;margin-top:10px;
+  border-radius:10px;font-size:16px;font-weight:600;
+}
+
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="card">
-      <div class="header">
-        <h1>HassanChef — Indian Food Calorie Calculator</h1>
-        <p>Calculate calories, protein, carbs, fat & fiber — per recipe & per serving</p>
+
+<div class="wrap">
+  <div class="card">
+
+    <div class="header">
+      <h1>HassanChef — Indian Food Calorie Calculator</h1>
+      <p>Calculate calories, protein, carbs, fat & fiber — home or restaurant style</p>
+    </div>
+
+    <div class="body">
+
+      <!-- Search Column -->
+      <div class="row">
+        <div class="col">
+          <label for="search">Search ingredient or dish</label>
+          <div class="suggestions">
+            <input type="text" id="search" placeholder="Try 'roti', 'butter naan', 'rice 100g'">
+            <div id="suggestions" class="listbox"></div>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <div style="flex:1;">
+              <label>Qty</label>
+              <input id="qty" type="number" value="1" min="0.01" step="0.01">
+            </div>
+            <div style="width:120px;">
+              <label>Unit</label>
+              <select id="unit">
+                <option value="serving">Serving</option>
+                <option value="g">Grams (g)</option>
+                <option value="ml">ml</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" id="addBtn">Add to list</button>
+            <button class="btn btn-ghost" onclick="openModePopup()">Mode</button>
+          </div>
+
+          <table id="list">
+            <thead>
+              <tr><th>Item</th><th>Cal</th><th>Prot</th><th>Carb</th><th>Fat</th><th></th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+
+        </div>
+
+        <!-- Summary Column -->
+        <div class="col" style="min-width:260px;max-width:360px;">
+          <div class="summary-box">
+            <h3>Total Nutrition</h3>
+            <div id="summary" class="muted">0 kcal</div>
+
+            <div class="summary-grid">
+              <div class="summary-card">Calories<div id="sumCal">0</div></div>
+              <div class="summary-card">Protein<div id="sumProt">0</div></div>
+              <div class="summary-card">Carbs<div id="sumCarb">0</div></div>
+              <div class="summary-card">Fat<div id="sumFat">0</div></div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
-      <div class="body">
-        <div class="row">
-          <div class="col">
-            <label for="search">Search ingredient or dish (try "butter naan")</label>
-            <div class="suggestions">
-              <input type="text" id="search" placeholder='Type e.g. "butter naan", "roti", "paneer 100g"' autocomplete="off">
-              <div id="suggestions" class="listbox" style="display:none"></div>
-            </div>
-            <div style="display:flex;gap:8px;margin-top:10px;">
-              <div style="flex:1;">
-                <label for="qty">Qty</label>
-                <input id="qty" type="number" value="1" min="0.01" step="0.01">
-              </div>
-              <div style="width:120px;">
-                <label for="unit">Unit</label>
-                <select id="unit">
-                  <option value="serving">Serving</option>
-                  <option value="g">Grams (g)</option>
-                  <option value="ml">ml</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="actions">
-              <button class="btn btn-primary" id="addBtn">Add to list</button>
-              <button class="btn btn-ghost" id="addCustom">+ Custom (name & kcal)</button>
-              <button class="btn btn-ghost" id="pasteBtn">Paste ingredients</button>
-            </div>
-
-            <div class="hint">Tip: type and choose a suggestion for best accuracy. Use grams for repeatable results.</div>
-
-            <table id="list" aria-live="polite">
-              <thead>
-                <tr><th>Item</th><th>Cal</th><th>Prot</th><th>Carb</th><th>Fat</th><th></th></tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-
-          </div>
-
-          <div class="col" style="min-width:260px;max-width:360px;">
-            <div class="summary-box">
-              <h3>Total Nutrition</h3>
-              <div id="summary" class="muted">0 kcal</div>
-              <div class="summary-grid" style="margin-top:10px">
-                <div class="summary-card">Calories <div id="sumCal" style="font-size:18px;margin-top:6px">0</div></div>
-                <div class="summary-card">Protein (g) <div id="sumProt" style="font-size:18px;margin-top:6px">0</div></div>
-                <div class="summary-card">Carbs (g) <div id="sumCarb" style="font-size:18px;margin-top:6px">0</div></div>
-                <div class="summary-card">Fat (g) <div id="sumFat" style="font-size:18px;margin-top:6px">0</div></div>
-              </div>
-
-              <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-                <div style="flex:1">
-                  <label for="servings">Servings</label>
-                  <input id="servings" type="number" min="1" value="1">
-                </div>
-                <button id="copySummary" class="btn btn-primary">Copy Summary</button>
-              </div>
-
-              <div style="margin-top:12px" class="muted small">Chef tip: prefer grams for best accuracy. For complex mixed dishes, add each component.</div>
-            </div>
-          </div>
-
-        </div> <!-- row -->
-
-      </div> <!-- body -->
-    </div> <!-- card -->
-  </div> <!-- wrap -->
-
-  <!-- Mobile sticky helpful bar -->
-  <div id="mobileBar" class="mobile-sticky" style="display:none">
-    <div style="font-weight:700">Calculator</div>
-    <div style="display:flex;gap:8px;">
-      <button id="openCalc" class="btn btn-primary">Open</button>
-      <button id="clearAll" class="btn btn-ghost">Clear</button>
     </div>
+
   </div>
-  <button onclick="setModeHome()" class="btn btn-ghost">Home</button>
-<button onclick="setModeRestaurant()" class="btn btn-ghost">Restaurant</button>
-<!-- MODE SELECT -->
-<div style="margin:10px 0;">
-  <button onclick="setModeHome()" class="btn btn-ghost">Home</button>
-  <button onclick="setModeRestaurant()" class="btn btn-ghost">Restaurant</button>
 </div>
 
-<!-- CALCULATOR LOGIC -->
+
+<!-- ========= MODE POPUP ========== -->
+<div id="modePopup">
+  <div class="popup-box">
+    <h3>Select Cooking Mode</h3>
+    <button class="btn-primary" onclick="setModeHome(); closeModePopup();">Home Cooking</button>
+    <button class="btn-ghost" onclick="setModeRestaurant(); closeModePopup();">Restaurant Style</button>
+    <button class="btn-ghost" onclick="closeModePopup()">Cancel</button>
+  </div>
+</div>
+
+
+<!-- ========= SCRIPT FILE ========= -->
 <script src="script.js"></script>
+
+<script>
+function openModePopup(){ document.getElementById("modePopup").style.display="flex"; }
+function closeModePopup(){ document.getElementById("modePopup").style.display="none"; }
+</script>
+
+</body>
+</html>
 
 
 
