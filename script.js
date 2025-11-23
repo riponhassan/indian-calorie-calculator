@@ -1,99 +1,113 @@
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
     let allFoods = [];
-    const searchInput = document.getElementById('search');
-    const suggestionsBox = document.getElementById('suggestions');
-    const qtyInput = document.getElementById('qty');
-    const unitSelect = document.getElementById('unit');
-    const addBtn = document.getElementById('addBtn');
-    const tableBody = document.querySelector('#list tbody');
-    const servingsInput = document.getElementById('servings');
+    let currentMode = "home"; // default view
 
-   // C. Convert JSON to uniform format
-allFoods = externalData.map(item => {
-    return {
-        name: item.name,
-        unit: item.unit || "serving",
-        home: item.versions.home,
-        restaurant: item.versions.restaurant,
+    const searchInput = document.getElementById("search");
+    const suggestionsBox = document.getElementById("suggestions");
+    const qtyInput = document.getElementById("qty");
+    const unitSelect = document.getElementById("unit");
+    const addBtn = document.getElementById("addBtn");
+    const tableBody = document.querySelector("#list tbody");
+    const servingsInput = document.getElementById("servings");
 
-        // Default displayed calories = home
-        calories: item.versions.home.cal,
-        protein: item.versions.home.prot,
-        carbs: item.versions.home.carb,
-        fat: item.versions.home.fat
-    };
-});
+    // -----------------------------
+    // 1) LOAD FOODS.JSON
+    // -----------------------------
+    async function loadFoods() {
+        try {
+            const res = await fetch("foods.json");
+            const externalData = await res.json();
 
-console.log("Chef's Kitchen Ready:", allFoods.length, "ingredients loaded.");
+            allFoods = externalData.map(item => {
+                return {
+                    name: item.name,
+                    unit: item.unit || "serving",
 
+                    home: item.home,
+                    restaurant: item.restaurant,
 
-    // SEARCH
-    function searchFood(q) {
+                    calories: item.home.cal,
+                    protein: item.home.prot,
+                    carbs: item.home.carb,
+                    fat: item.home.fat
+                };
+            });
+
+            console.log("Chef's Kitchen Ready:", allFoods.length, "items");
+        } catch (err) {
+            console.error("Error loading foods.json:", err);
+        }
+    }
+
+    // -----------------------------
+    // 2) SEARCH FUNCTION
+    // -----------------------------
+    function searchFood(query) {
         suggestionsBox.innerHTML = "";
 
-        if (!q || q.length < 2) {
+        if (!query || query.length < 2) {
             suggestionsBox.style.display = "none";
             return;
         }
 
-        const query = q.toLowerCase();
+        const lower = query.toLowerCase();
         let count = 0;
 
-        allFoods.forEach(food => {
-            if (count >= 50) return;
-
-            if (food.name.toLowerCase().includes(query)) {
-                const btn = document.createElement('button');
-                btn.innerText = `${food.name}`;
-                btn.onclick = () => selectFood(food);
-                suggestionsBox.appendChild(btn);
+        for (const food of allFoods) {
+            if (count > 50) break;
+            if (food.name.toLowerCase().includes(lower)) {
+                showSuggestion(food);
                 count++;
             }
-        });
-
-        suggestionsBox.style.display = count ? "block" : "none";
-    }
-
-    // SELECT FOOD
-    function selectFood(food) {
-        searchInput.value = food.name;
-        suggestionsBox.style.display = "none";
-
-        // Auto set unit
-        if (food.unit === "g" || food.unit === "ml") {
-            unitSelect.value = food.unit;
-            qtyInput.value = 100;
-        } else {
-            unitSelect.value = "serving";
-            qtyInput.value = 1;
         }
 
-        addBtn.onclick = () => addToTable(food);
+        suggestionsBox.style.display = count > 0 ? "block" : "none";
     }
 
-    // ADD TO TABLE
+    // -----------------------------
+    // 3) SHOW SUGGESTION
+    // -----------------------------
+    function showSuggestion(food) {
+        const btn = document.createElement("button");
+
+        btn.innerText = `${food.name} (${food.home.cal} kcal home / ${food.restaurant.cal} kcal restaurant)`;
+
+        btn.onclick = () => {
+            searchInput.value = food.name;
+            suggestionsBox.style.display = "none";
+
+            unitSelect.value = food.unit;
+            qtyInput.value = food.unit === "g" ? 100 : 1;
+
+            addBtn.onclick = () => addToTable(food);
+        };
+
+        suggestionsBox.appendChild(btn);
+    }
+
+    // -----------------------------
+    // 4) ADD ITEM TO TABLE
+    // -----------------------------
     function addToTable(food) {
+
         const qty = parseFloat(qtyInput.value) || 1;
         const unit = unitSelect.value;
 
-        // Get home or restaurant values — default restaurant
-        const use = food.restaurant || food.home;
+        let data = currentMode === "home" ? food.home : food.restaurant;
 
         let multiplier = qty;
+        if (unit === "g") multiplier = qty / 100;
 
-        if (unit === 'g' && food.unit === 'g') {
-            multiplier = qty / 100;
-        }
-
-        const totalCal = Math.round(use.cal * multiplier);
-        const totalProt = (use.prot * multiplier).toFixed(1);
-        const totalCarb = (use.carb * multiplier).toFixed(1);
-        const totalFat = (use.fat * multiplier).toFixed(1);
+        const totalCal = Math.round(data.cal * multiplier);
+        const totalProt = (data.prot * multiplier).toFixed(1);
+        const totalCarb = (data.carb * multiplier).toFixed(1);
+        const totalFat = (data.fat * multiplier).toFixed(1);
 
         const row = document.createElement("tr");
+
         row.innerHTML = `
-            <td>${food.name}<br><small>${qty}${unit}</small></td>
+            <td>${food.name}<br><small class="muted">${currentMode}</small></td>
             <td>${totalCal}</td>
             <td>${totalProt}</td>
             <td>${totalCarb}</td>
@@ -103,36 +117,52 @@ console.log("Chef's Kitchen Ready:", allFoods.length, "ingredients loaded.");
 
         row.querySelector(".remove-btn").onclick = () => {
             row.remove();
-            updateTotal();
+            updateTotals();
         };
 
         tableBody.appendChild(row);
-        updateTotal();
-        searchInput.value = "";
+        updateTotals();
     }
 
-    // UPDATE TOTALS
-    function updateTotal() {
-        let totalCal = 0, p=0, c=0, f=0;
+    // -----------------------------
+    // 5) UPDATE TOTAL NUTRITION
+    // -----------------------------
+    function updateTotals() {
+        let c = 0, p = 0, carb = 0, f = 0;
 
-        document.querySelectorAll('#list tbody tr').forEach(row => {
-            const cols = row.querySelectorAll('td');
-            totalCal += parseFloat(cols[1].innerText);
+        document.querySelectorAll("#list tbody tr").forEach(row => {
+            const cols = row.querySelectorAll("td");
+            c += parseFloat(cols[1].innerText);
             p += parseFloat(cols[2].innerText);
-            c += parseFloat(cols[3].innerText);
+            carb += parseFloat(cols[3].innerText);
             f += parseFloat(cols[4].innerText);
         });
 
-        const servings = parseFloat(servingsInput.value) || 1;
-
-        document.getElementById('sumCal').innerText = Math.round(totalCal / servings);
-        document.getElementById('sumProt').innerText = (p / servings).toFixed(1);
-        document.getElementById('sumCarb').innerText = (c / servings).toFixed(1);
-        document.getElementById('sumFat').innerText = (f / servings).toFixed(1);
-
-        document.getElementById('summary').innerText = `${Math.round(totalCal)} kcal`;
+        document.getElementById("sumCal").innerText = Math.round(c);
+        document.getElementById("sumProt").innerText = p.toFixed(1);
+        document.getElementById("sumCarb").innerText = carb.toFixed(1);
+        document.getElementById("sumFat").innerText = f.toFixed(1);
+        document.getElementById("summary").innerText = `${Math.round(c)} kcal`;
     }
 
+    // -----------------------------
+    // 6) HOME/RESTAURANT SWITCH BUTTONS
+    // -----------------------------
+    // (You can add real buttons later)
+    window.setModeHome = function () {
+        currentMode = "home";
+        console.log("Switched to HOME values");
+    };
+
+    window.setModeRestaurant = function () {
+        currentMode = "restaurant";
+        console.log("Switched to RESTAURANT values");
+    };
+
+    // -----------------------------
+    // INIT
+    // -----------------------------
     await loadFoods();
-    searchInput.addEventListener('input', (e) => searchFood(e.target.value));
+    searchInput.addEventListener("input", (e) => searchFood(e.target.value));
+
 });
