@@ -115,24 +115,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     /***********************
      UPDATE TOTALS
     ************************/
-    function updateSummary() {
-        let c = 0, p = 0, carb = 0, f = 0;
+   function updateAllRows() {
+    document.querySelectorAll('#list tbody tr').forEach(row => {
 
-        document.querySelectorAll("#list tbody tr").forEach(row => {
-            const t = row.querySelectorAll("td");
-            c += parseFloat(t[1].innerText);
-            p += parseFloat(t[2].innerText);
-            carb += parseFloat(t[3].innerText);
-            f += parseFloat(t[4].innerText);
-        });
+        const name = row.getAttribute("data-name");
+        const qty  = parseFloat(row.getAttribute("data-qty"));
+        const unit = row.getAttribute("data-unit");
 
-        document.getElementById("sumCal").innerText = Math.round(c);
-        document.getElementById("sumProt").innerText = p.toFixed(1);
-        document.getElementById("sumCarb").innerText = carb.toFixed(1);
-        document.getElementById("sumFat").innerText = f.toFixed(1);
-        document.getElementById("summary").innerText = `${Math.round(c)} kcal`;
-    }
-});
+        const food = allFoods.find(f => f.name === name);
+
+        if (!food) return;
+
+        const v = mode === "home" ? food.home : food.restaurant;
+
+        let multiplier = unit === "g" ? qty / 100 : qty;
+
+        row.querySelector(".col-cal").innerText  = Math.round(v.cal  * multiplier);
+        row.querySelector(".col-prot").innerText = (v.prot * multiplier).toFixed(1);
+        row.querySelector(".col-carb").innerText = (v.carb * multiplier).toFixed(1);
+        row.querySelector(".col-fat").innerText  = (v.fat * multiplier).toFixed(1);
+    });
+
+    updateTotal();
+}
 
 /**************************************************
    MODE SWITCHING — WORKS NOW
@@ -147,4 +152,47 @@ function setModeRestaurant() {
     mode = "restaurant";
     alert("✔ Switched to RESTAURANT cooking values");
 }
+<div id="modePopup" style="
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #b76b6b;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  display: none;
+  z-index: 9999;
+"></div>
+
+<script>
+function showPopup(text) {
+    const box = document.getElementById("modePopup");
+    box.innerText = text;
+    box.style.display = "block";
+
+    setTimeout(() => {
+        box.style.opacity = "0";
+        setTimeout(() => {
+            box.style.display = "none";
+            box.style.opacity = "1";
+        }, 300);
+    }, 1200);
+}
+
+// Replace alert() with popup
+function setModeHome() {
+    mode = "home";
+    updateAllRows();
+    showPopup("Home mode active");
+}
+
+function setModeRestaurant() {
+    mode = "restaurant";
+    updateAllRows();
+    showPopup("Restaurant mode active");
+}
+</script>
 
