@@ -1,4 +1,8 @@
 document.addEventListener("DOMContentLoaded", async () => {
+<div style="margin-top:10px; display:flex; gap:10px;">
+  <button onclick="setModeHome()" class="btn btn-ghost">Home</button>
+  <button onclick="setModeRestaurant()" class="btn btn-ghost">Restaurant</button>
+</div>
 
     let allFoods = [];
     let currentMode = "home"; // default view
