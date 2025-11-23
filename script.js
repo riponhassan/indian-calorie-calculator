@@ -58,23 +58,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         suggestionsBox.style.display = count > 0 ? 'block' : 'none';
     }
 
-    // --- 4. SHOW SUGGESTION ---
+   // --- 4. SHOW SUGGESTION (SMARTER VERSION) ---
     function showSuggestion(food) {
         const btn = document.createElement('button');
-        // Display name and calories per 100g/serving
-        const unitLabel = food.unit || 'serving';
-        btn.innerText = `${food.name} (${food.calories} kcal / ${unitLabel})`;
+        
+        // Check if this food is usually measured in Servings or Grams
+        // (If your JSON doesn't have a 'unit', we assume 'serving' for items like Apples)
+        const preferredUnit = food.unit || 'serving'; 
+        
+        btn.innerText = `${food.name} (${food.calories} kcal / ${preferredUnit})`;
         
         btn.onclick = () => {
             searchInput.value = food.name; // Fill input
             suggestionsBox.style.display = 'none'; // Hide list
             
-            // Auto-fill the add function with this food's data
-            // (We store the selected food in the button for easy access)
+            // --- SMART SWITCH LOGIC ---
+            // If the food is per serving (like Apple, Egg), switch dropdown to "Serving"
+            // If the food is usually grams (like Rice), switch dropdown to "Grams"
+            if (preferredUnit === 'g' || preferredUnit === 'ml') {
+                unitSelect.value = preferredUnit;
+                qtyInput.value = '100'; // Default to 100g for rice/curry
+            } else {
+                unitSelect.value = 'serving';
+                qtyInput.value = '1';   // Default to 1 item for Apple/Egg
+            }
+
+            // Bind the add button
             addBtn.onclick = () => addToTable(food);
         };
         
         suggestionsBox.appendChild(btn);
+    
     }
 
     // --- 5. ADD TO TABLE LOGIC ---
