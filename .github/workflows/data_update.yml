@@ -1,15 +1,15 @@
 name: Auto Update Food Database
 
 on:
-  workflow_dispatch:   # manual run
+  workflow_dispatch:    # manual run
   schedule:
-    - cron: "0 0 * * *"    # every day at 00:00 UTC
+    - cron: "0 0 * * *" # every day at 00:00 UTC
 
 permissions:
   contents: write
 
 jobs:
-  update:
+  update-foods:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,22 +17,24 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt || true
+        run: pip install requests
 
-      - name: Run auto food updater
+      - name: Run update script
         env:
           FOOD_API_KEY: ${{ secrets.FOOD_API_KEY }}
-        run: python etl/update_foods.py
-
-      - name: Commit and push changes
         run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
+          python etl/update_foods.py
+
+      - name: Commit & Push Changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
           git add foods.json
-          git commit -m "auto: updated foods.json" || echo "No changes"
+          git commit -m "Auto-update foods.json" || echo "No changes"
           git push
+
