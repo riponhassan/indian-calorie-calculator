@@ -107,8 +107,36 @@ document.addEventListener("DOMContentLoaded", () => {
  // trigger rebuild
 
   // LOAD DATA
-  loadFoods();
-});
+  async function loadFoods() {
+  try {
+    // load base foods.json
+    const baseRes = await fetch('foods.json');
+    const base = await baseRes.json();
+
+    // try to load extra if present
+    let extra = [];
+    try {
+      const extraRes = await fetch('data/foods_extra.json');
+      extra = await extraRes.json();
+    } catch(e) {
+      console.log('No foods_extra.json found (OK).');
+    }
+
+    // normalize both lists into same object format used by script
+    const normalize = item => ({
+      name: item.name,
+      unit: item.unit || 'serving',
+      home: item.versions?.home || item.home || { cal:0, prot:0, carb:0, fat:0 },
+      restaurant: item.versions?.restaurant || item.restaurant || { cal:0, prot:0, carb:0, fat:0 }
+    });
+
+    allFoods = [...base.map(normalize), ...extra.map(normalize)];
+    console.log("Chef’s Kitchen Ready:", allFoods.length, "items");
+  } catch (err) {
+    console.error("FAILED to load foods.json", err);
+  }
+}
+
 
 // SET MODE + CLOSE POPUP
 function setMode(m) {
