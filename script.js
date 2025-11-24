@@ -87,38 +87,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ----- ADD ROW -----
   function addToList(food) {
-    const qty = Number(qtyInput.value) || 1;
-    let multiplier = qty;
+  const qty = Number(qtyInput.value) || 1;
+  let multiplier = qty;
 
-    // grams support: food.unit === 'g'
-    if (unitSelect.value === "g" && food.unit === "g") {
-      multiplier = qty / 100; // data is per 100g
-    }
+  if (unitSelect.value === "g" && food.unit === "g") {
+    multiplier = qty / 100;
+  }
 
-    // versions normalized as food.versions.home / restaurant
-    const version = (food.versions && food.versions[mode]) ? food.versions[mode]
-                      : (mode === "home" ? (food.home || {}) : (food.restaurant || {}));
+  const values = food[mode]; // <-- correct
 
-    const cal = (version.cal || 0) * multiplier;
-    const prot = (version.prot || 0) * multiplier;
-    const carb = (version.carb || 0) * multiplier;
-    const fat = (version.fat || 0) * multiplier;
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td>${food.name}<br><small>${mode.toUpperCase()}</small></td>
+    <td>${Math.round(values.cal * multiplier)}</td>
+    <td>${(values.prot * multiplier).toFixed(1)}</td>
+    <td>${(values.carb * multiplier).toFixed(1)}</td>
+    <td>${(values.fat * multiplier).toFixed(1)}</td>
+    <td><button class="remove-btn">❌</button></td>
+  `;
 
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${food.name}<br><small class="muted">${mode.toUpperCase()} • ${qty}${unitSelect.value}</small></td>
-      <td>${Math.round(cal)}</td>
-      <td>${prot.toFixed(1)}</td>
-      <td>${carb.toFixed(1)}</td>
-      <td>${fat.toFixed(1)}</td>
-      <td><button class="remove-btn">❌</button></td>
-    `;
-    row.querySelector(".remove-btn").onclick = () => {
-      row.remove();
-      updateTotals();
-    };
-    tableBody.appendChild(row);
+  row.querySelector(".remove-btn").onclick = () => {
+    row.remove();
     updateTotals();
+  };
+
+  tableBody.appendChild(row);
+  updateTotals();
+  }
 
     // reset search box (user can add more)
     searchInput.value = "";
