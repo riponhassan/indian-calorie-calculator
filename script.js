@@ -19,9 +19,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const modeBtn = document.getElementById("modeBtn");
 
   // show mode popup
-  modeBtn.onclick = () => {
-    document.getElementById("modePopup").style.display = "flex";
-  };
+  if (modeBtn) {
+    modeBtn.onclick = () => {
+      const popup = document.getElementById("modePopup");
+      if (popup) popup.style.display = "flex";
+    };
+  }
 
   // ----- SEARCH -----
   function searchFood(q) {
@@ -57,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ----- ADD (when Add button clicked) -----
-  async function addSelectedOrFind() {
+  function addSelectedOrFind() {
     // If user selected a suggestion, add that
     if (selectedFood) {
       addToList(selectedFood);
@@ -87,34 +90,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ----- ADD ROW -----
   function addToList(food) {
-  const qty = Number(qtyInput.value) || 1;
-  let multiplier = qty;
+    const qty = Number(qtyInput.value) || 1;
+    let multiplier = qty;
 
-  if (unitSelect.value === "g" && food.unit === "g") {
-    multiplier = qty / 100;
-  }
+    if (unitSelect.value === "g" && food.unit === "g") {
+      multiplier = qty / 100;
+    }
 
-  const values = food.versions[mode];  // <-- FIXED
+    // support both shapes: item.versions.home OR legacy item.home
+    const versions = food.versions || {};
+    const values = versions[mode] || food[mode] || { cal: 0, prot: 0, carb: 0, fat: 0 };
 
-  const row = document.createElement("tr");
-  row.innerHTML = `
-    <td>${food.name}<br><small>${mode.toUpperCase()}</small></td>
-    <td>${Math.round(values.cal * multiplier)}</td>
-    <td>${(values.prot * multiplier).toFixed(1)}</td>
-    <td>${(values.carb * multiplier).toFixed(1)}</td>
-    <td>${(values.fat * multiplier).toFixed(1)}</td>
-    <td><button class="remove-btn">❌</button></td>
-  `;
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${food.name}<br><small>${mode.toUpperCase()}</small></td>
+      <td>${Math.round((values.cal || 0) * multiplier)}</td>
+      <td>${((values.prot || 0) * multiplier).toFixed(1)}</td>
+      <td>${((values.carb || 0) * multiplier).toFixed(1)}</td>
+      <td>${((values.fat || 0) * multiplier).toFixed(1)}</td>
+      <td><button class="remove-btn">❌</button></td>
+    `;
 
-  row.querySelector(".remove-btn").onclick = () => {
-    row.remove();
+    row.querySelector(".remove-btn").onclick = () => {
+      row.remove();
+      updateTotals();
+    };
+
+    tableBody.appendChild(row);
     updateTotals();
-  };
-
-  tableBody.appendChild(row);
-  updateTotals();
-  }
-  }
 
     // reset search box (user can add more)
     searchInput.value = "";
@@ -142,7 +145,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ----- EVENT BINDINGS -----
-  searchInput.addEventListener("input", e => searchFood(e.target.value));
+  if (searchInput) {
+    searchInput.addEventListener("input", e => searchFood(e.target.value));
+  }
+
   document.addEventListener("click", e => {
     // close suggestions if click outside search or suggestions
     if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
@@ -150,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  addBtn.addEventListener("click", addSelectedOrFind);
+  if (addBtn) addBtn.addEventListener("click", addSelectedOrFind);
 
   // ----- LOAD FOODS (single, reliable) -----
   async function loadFoods() {
@@ -197,7 +203,6 @@ document.addEventListener("DOMContentLoaded", () => {
 }); // DOMContentLoaded end
 
 // ----- global function for inline popup buttons in index.html -----
-// index.html uses: onclick="setMode('home')" - must be global
 function setMode(m) {
   mode = m;
   // user feedback and hide popup
