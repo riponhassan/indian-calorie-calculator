@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
     multiplier = qty / 100;
   }
 
-  const values = food[mode]; // <-- correct
+  const values = food.versions[mode];  // <-- FIXED
 
   const row = document.createElement("tr");
   row.innerHTML = `
@@ -113,6 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   tableBody.appendChild(row);
   updateTotals();
+  }
   }
 
     // reset search box (user can add more)
