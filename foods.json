@@ -7,6 +7,7 @@
       "restaurant": { "cal": 120, "prot": 3, "carb": 18, "fat": 3 }
     }
   },
+
   {
     "name": "Butter Naan",
     "unit": "serving",
@@ -15,6 +16,7 @@
       "restaurant": { "cal": 370, "prot": 7,  "carb": 45, "fat": 17 }
     }
   },
+
   {
     "name": "Rice, White (100g cooked)",
     "unit": "g",
@@ -23,14 +25,7 @@
       "restaurant": { "cal": 130, "prot": 2.4, "carb": 28, "fat": 0.3 }
     }
   },
-  {
-    "name": "Paneer (100g)",
-    "unit": "g",
-    "versions": {
-      "home":       { "cal": 265, "prot": 18, "carb": 6, "fat": 20 },
-      "restaurant": { "cal": 290, "prot": 18, "carb": 6, "fat": 22 }
-    }
-  },
+
   {
     "name": "Chicken Curry (1 serving)",
     "unit": "serving",
@@ -39,6 +34,7 @@
       "restaurant": { "cal": 420, "prot": 28, "carb": 8, "fat": 28 }
     }
   },
+
   {
     "name": "Idli (1)",
     "unit": "serving",
