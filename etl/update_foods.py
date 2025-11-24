@@ -1,42 +1,64 @@
 import json
+import requests
 import os
 
-FILE = "foods.json"
+API_KEY = os.getenv("FOOD_API_KEY")
+URL = "https://api.api-ninjas.com/v1/nutrition?query="
 
-def load_foods():
-    with open(FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+items = [
+    "roti",
+    "naan",
+    "chicken curry",
+    "idli"
+]
 
-def save_foods(data):
-    with open(FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+headers = {"X-Api-Key": API_KEY}
 
-def main():
-    print("🔪 Chef Hassan — Auto Food Updater Running...")
+def fetch_item(name):
+    try:
+        r = requests.get(URL + name, headers=headers, timeout=10)
+        data = r.json()
+        if not data:
+            return None
 
-    foods = load_foods()
-
-    # Example: auto append missing keys
-    for item in foods:
-        if "versions" not in item:
-            print("Fixing:", item["name"])
-            item["versions"] = {
-                "home":  {
-                    "cal": item.get("calories", 0),
-                    "prot": item.get("protein", 0),
-                    "carb": item.get("carbs", 0),
-                    "fat": item.get("fat", 0)
+        x = data[0]
+        return {
+            "name": name,
+            "unit": "serving",
+            "versions": {
+                "home": {
+                    "cal": x.get("calories", 0),
+                    "prot": x.get("protein_g", 0),
+                    "carb": x.get("carbohydrates_total_g", 0),
+                    "fat": x.get("fat_total_g", 0)
                 },
                 "restaurant": {
-                    "cal": item.get("calories", 0) + 10,
-                    "prot": item.get("protein", 0),
-                    "carb": item.get("carbs", 0),
-                    "fat": item.get("fat", 0) + 1
+                    "cal": round(x.get("calories", 0) * 1.15, 2),
+                    "prot": x.get("protein_g", 0),
+                    "carb": x.get("carbohydrates_total_g", 0),
+                    "fat": round(x.get("fat_total_g", 0) * 1.25, 2)
                 }
             }
+        }
+    except Exception as e:
+        print("Error fetching", name, e)
+        return None
 
-    save_foods(foods)
-    print("✔ Updated foods.json successfully")
+
+def main():
+    result = []
+
+    for item in items:
+        print("Fetching:", item)
+        data = fetch_item(item)
+        if data:
+            result.append(data)
+
+    with open("foods.json", "w") as f:
+        json.dump(result, f, indent=2)
+
+    print("Updated foods.json with", len(result), "items")
+
 
 if __name__ == "__main__":
     main()
