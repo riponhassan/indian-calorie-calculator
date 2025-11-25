@@ -542,3 +542,982 @@
   {"name": "Mutton Roll", "unit": "serving", "versions": {"home": {"cal": 420,"prot": 26,"carb": 28,"fat": 22}, "restaurant": {"cal": 560,"prot": 28,"carb": 32,"fat": 32}}},
   {"name": "Fish Roll", "unit": "serving", "versions": {"home": {"cal": 340,"prot": 20,"carb": 30,"fat": 14}, "restaurant": {"cal": 470,"prot": 22,"carb": 34,"fat": 22}}}
 ]
+  ,
+  {
+    "name": "Spicy Egg Curry",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 240, "prot": 14, "carb": 8, "fat": 16 },
+      "restaurant": { "cal": 310, "prot": 15, "carb": 10, "fat": 22 }
+    }
+  },
+  {
+    "name": "Fish Fry Masala",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 310, "prot": 22, "carb": 6, "fat": 20 },
+      "restaurant": { "cal": 390, "prot": 24, "carb": 10, "fat": 26 }
+    }
+  },
+  {
+    "name": "Chicken Kali Mirch",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 330, "prot": 28, "carb": 6, "fat": 18 },
+      "restaurant": { "cal": 430, "prot": 29, "carb": 8, "fat": 28 }
+    }
+  },
+  {
+    "name": "Paneer Kali Mirch",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 320, "prot": 14, "carb": 12, "fat": 22 },
+      "restaurant": { "cal": 390, "prot": 15, "carb": 14, "fat": 30 }
+    }
+  },
+  {
+    "name": "Hyderabadi Egg Curry",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 260, "prot": 15, "carb": 10, "fat": 17 },
+      "restaurant": { "cal": 340, "prot": 16, "carb": 12, "fat": 24 }
+    }
+  },
+  {
+    "name": "Garlic Chicken Handi",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 360, "prot": 29, "carb": 8, "fat": 22 },
+      "restaurant": { "cal": 460, "prot": 30, "carb": 10, "fat": 32 }
+    }
+  },
+  {
+    "name": "Kolhapuri Veg Curry",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 280, "prot": 7, "carb": 16, "fat": 18 },
+      "restaurant": { "cal": 350, "prot": 7, "carb": 20, "fat": 24 }
+    }
+  },
+  {
+    "name": "Amritsari Fish",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 300, "prot": 20, "carb": 12, "fat": 16 },
+      "restaurant": { "cal": 380, "prot": 21, "carb": 16, "fat": 24 }
+    }
+  },
+  {
+    "name": "Veg Handi Masala",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 260, "prot": 6, "carb": 14, "fat": 18 },
+      "restaurant": { "cal": 330, "prot": 6, "carb": 18, "fat": 24 }
+    }
+  },
+  {
+    "name": "Chicken 65 Handi",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 350, "prot": 26, "carb": 10, "fat": 22 },
+      "restaurant": { "cal": 450, "prot": 27, "carb": 12, "fat": 32 }
+    }
+  },
+  {
+    "name": "Garlic Paneer Fry",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 340, "prot": 14, "carb": 12, "fat": 24 },
+      "restaurant": { "cal": 420, "prot": 15, "carb": 14, "fat": 32 }
+    }
+  },
+  {
+    "name": "Spicy Mutton Roast",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 420, "prot": 22, "carb": 6, "fat": 32 },
+      "restaurant": { "cal": 530, "prot": 23, "carb": 8, "fat": 42 }
+    }
+  },
+  {
+    "name": "Tandoori Egg Fry",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 230, "prot": 14, "carb": 4, "fat": 14 },
+      "restaurant": { "cal": 290, "prot": 14, "carb": 6, "fat": 20 }
+    }
+  },
+  {
+    "name": "Kadhai Fish",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 330, "prot": 24, "carb": 10, "fat": 18 },
+      "restaurant": { "cal": 410, "prot": 24, "carb": 12, "fat": 26 }
+    }
+  },
+  {
+    "name": "Paneer Pepper Fry",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 310, "prot": 14, "carb": 10, "fat": 22 },
+      "restaurant": { "cal": 380, "prot": 14, "carb": 12, "fat": 29 }
+    }
+  },
+  {
+    "name": "Veg Manchurian Gravy",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 280, "prot": 6, "carb": 20, "fat": 16 },
+      "restaurant": { "cal": 350, "prot": 6, "carb": 26, "fat": 22 }
+    }
+  },
+  {
+    "name": "Chicken Manchurian Gravy",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 360, "prot": 28, "carb": 14, "fat": 18 },
+      "restaurant": { "cal": 460, "prot": 29, "carb": 16, "fat": 28 }
+    }
+  },
+  {
+    "name": "Egg Masala Fry",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 260, "prot": 14, "carb": 8, "fat": 18 },
+      "restaurant": { "cal": 330, "prot": 14, "carb": 10, "fat": 25 }
+    }
+  },
+  {
+    "name": "Goan Fish Curry",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 310, "prot": 22, "carb": 12, "fat": 16 },
+      "restaurant": { "cal": 390, "prot": 22, "carb": 14, "fat": 24 }
+    }
+  },
+  {
+    "name": "Veg Spicy Handi",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 260, "prot": 6, "carb": 16, "fat": 18 },
+      "restaurant": { "cal": 340, "prot": 6, "carb": 20, "fat": 26 }
+    }
+  }
+  {
+    "name": "Chicken 65 Pulav",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 410, "prot": 22, "carb": 46, "fat": 14 },
+      "restaurant": { "cal": 520, "prot": 26, "carb": 52, "fat": 18 }
+    }
+  },
+  {
+    "name": "Paneer Roast",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 310, "prot": 14, "carb": 18, "fat": 20 },
+      "restaurant": { "cal": 380, "prot": 16, "carb": 22, "fat": 26 }
+    }
+  },
+  {
+    "name": "Fish Khichdi",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 290, "prot": 16, "carb": 32, "fat": 10 },
+      "restaurant": { "cal": 340, "prot": 18, "carb": 38, "fat": 14 }
+    }
+  },
+  {
+    "name": "Egg Cutlet Gravy",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 330, "prot": 14, "carb": 24, "fat": 20 },
+      "restaurant": { "cal": 400, "prot": 15, "carb": 28, "fat": 26 }
+    }
+  },
+  {
+    "name": "Veg Kebab Masala",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 260, "prot": 10, "carb": 22, "fat": 14 },
+      "restaurant": { "cal": 340, "prot": 11, "carb": 26, "fat": 20 }
+    }
+  },
+  {
+    "name": "Chicken Noodles Handi",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 420, "prot": 22, "carb": 48, "fat": 16 },
+      "restaurant": { "cal": 540, "prot": 24, "carb": 54, "fat": 22 }
+    }
+  },
+  {
+    "name": "Paneer Chaat Masala",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 230, "prot": 10, "carb": 28, "fat": 8 },
+      "restaurant": { "cal": 310, "prot": 12, "carb": 32, "fat": 14 }
+    }
+  },
+  {
+    "name": "Fish Fry Vindaloo",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 460, "prot": 24, "carb": 18, "fat": 30 },
+      "restaurant": { "cal": 560, "prot": 27, "carb": 20, "fat": 38 }
+    }
+  },
+  {
+    "name": "Special Pulav Masala",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 310, "prot": 8, "carb": 52, "fat": 8 },
+      "restaurant": { "cal": 380, "prot": 9, "carb": 60, "fat": 12 }
+    }
+  },
+  {
+    "name": "Kashmiri Veg Handi",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 280, "prot": 10, "carb": 32, "fat": 12 },
+      "restaurant": { "cal": 350, "prot": 11, "carb": 36, "fat": 18 }
+    }
+  },
+  {
+    "name": "Punjabi Chicken Roast",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 450, "prot": 32, "carb": 10, "fat": 28 },
+      "restaurant": { "cal": 560, "prot": 35, "carb": 12, "fat": 36 }
+    }
+  },
+  {
+    "name": "Egg Roll Do Pyaza",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 280, "prot": 10, "carb": 30, "fat": 12 },
+      "restaurant": { "cal": 340, "prot": 11, "carb": 34, "fat": 18 }
+    }
+  },
+  {
+    "name": "Veg Manchurian Tandoori",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 360, "prot": 8, "carb": 46, "fat": 16 },
+      "restaurant": { "cal": 430, "prot": 9, "carb": 52, "fat": 20 }
+    }
+  },
+  {
+    "name": "Chicken Butter Pulav",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 520, "prot": 28, "carb": 48, "fat": 24 },
+      "restaurant": { "cal": 620, "prot": 30, "carb": 54, "fat": 32 }
+    }
+  },
+  {
+    "name": "Hyderabadi Egg Roast",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 290, "prot": 14, "carb": 10, "fat": 18 },
+      "restaurant": { "cal": 360, "prot": 15, "carb": 12, "fat": 24 }
+    }
+  },
+  {
+    "name": "Kolhapuri Fish Gravy",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 330, "prot": 20, "carb": 12, "fat": 18 },
+      "restaurant": { "cal": 420, "prot": 22, "carb": 14, "fat": 26 }
+    }
+  },
+  {
+    "name": "Special Kebab Roll",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 310, "prot": 12, "carb": 34, "fat": 12 },
+      "restaurant": { "cal": 380, "prot": 13, "carb": 38, "fat": 18 }
+    }
+  },
+  {
+    "name": "Garlic Chicken Masala",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 430, "prot": 24, "carb": 12, "fat": 28 },
+      "restaurant": { "cal": 520, "prot": 26, "carb": 14, "fat": 36 }
+    }
+  },
+  {
+    "name": "Veg Fry Handi",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 260, "prot": 8, "carb": 30, "fat": 12 },
+      "restaurant": { "cal": 330, "prot": 9, "carb": 34, "fat": 18 }
+    }
+  },
+  {
+    "name": "Goan Paneer Vindaloo",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 340, "prot": 14, "carb": 20, "fat": 20 },
+      "restaurant": { "cal": 420, "prot": 16, "carb": 24, "fat": 28 }
+    }
+  },
+  {
+    "name": "Andhra Chicken 65",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 480, "prot": 28, "carb": 16, "fat": 30 },
+      "restaurant": { "cal": 590, "prot": 30, "carb": 18, "fat": 38 }
+    }
+  },
+  {
+    "name": "Mutton Tikka Do Pyaza",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 530, "prot": 28, "carb": 12, "fat": 36 },
+      "restaurant": { "cal": 640, "prot": 30, "carb": 14, "fat": 46 }
+    }
+  },
+  {
+    "name": "Veg Pulav Roast",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 260, "prot": 8, "carb": 42, "fat": 6 },
+      "restaurant": { "cal": 330, "prot": 9, "carb": 48, "fat": 10 }
+    }
+  },
+  {
+    "name": "Fish Masala Roll",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 310, "prot": 20, "carb": 20, "fat": 12 },
+      "restaurant": { "cal": 380, "prot": 22, "carb": 22, "fat": 18 }
+    }
+  },
+  {
+    "name": "Egg Roast Handi",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 260, "prot": 12, "carb": 8, "fat": 16 },
+      "restaurant": { "cal": 320, "prot": 13, "carb": 10, "fat": 22 }
+    }
+  },
+  {
+    "name": "Paneer 65 Pulav",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 350, "prot": 14, "carb": 42, "fat": 14 },
+      "restaurant": { "cal": 430, "prot": 16, "carb": 48, "fat": 20 }
+    }
+  },
+  {
+    "name": "Special Chaat Vindaloo",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 210, "prot": 6, "carb": 34, "fat": 6 },
+      "restaurant": { "cal": 280, "prot": 7, "carb": 40, "fat": 10 }
+    }
+  },
+  {
+    "name": "Garlic Noodles Roast",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 390, "prot": 10, "carb": 52, "fat": 14 },
+      "restaurant": { "cal": 460, "prot": 11, "carb": 58, "fat": 20 }
+    }
+  },
+  {
+    "name": "Chicken Roll Masala",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 300, "prot": 16, "carb": 34, "fat": 10 },
+      "restaurant": { "cal": 380, "prot": 17, "carb": 38, "fat": 16 }
+    }
+  },
+  {
+    "name": "Veg Roast Pulav",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 240, "prot": 6, "carb": 42, "fat": 4 },
+      "restaurant": { "cal": 310, "prot": 7, "carb": 48, "fat": 8 }
+    }
+  },
+  {
+    "name": "Tikka Handi Masala",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 380, "prot": 20, "carb": 16, "fat": 22 },
+      "restaurant": { "cal": 480, "prot": 22, "carb": 18, "fat": 30 }
+    }
+  },
+  {
+    "name": "Butter Egg Pulav",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 310, "prot": 12, "carb": 38, "fat": 12 },
+      "restaurant": { "cal": 380, "prot": 13, "carb": 42, "fat": 18 }
+    }
+  },
+  {
+    "name": "Kebab Roast Masala",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 330, "prot": 14, "carb": 16, "fat": 20 },
+      "restaurant": { "cal": 410, "prot": 16, "carb": 18, "fat": 26 }
+    }
+  },
+  {
+    "name": "Egg Fry Handi",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 250, "prot": 10, "carb": 10, "fat": 16 },
+      "restaurant": { "cal": 320, "prot": 11, "carb": 12, "fat": 22 }
+    }
+  },
+  {
+    "name": "Paneer Masala Roll",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 320, "prot": 14, "carb": 26, "fat": 18 },
+      "restaurant": { "cal": 390, "prot": 16, "carb": 28, "fat": 24 }
+    }
+  },
+  {
+    "name": "Veg Special Pulav",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 260, "prot": 8, "carb": 44, "fat": 6 },
+      "restaurant": { "cal": 330, "prot": 9, "carb": 48, "fat": 10 }
+    }
+  },
+  {
+    "name": "Fish Roast Do Pyaza",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 350, "prot": 22, "carb": 14, "fat": 20 },
+      "restaurant": { "cal": 420, "prot": 24, "carb": 16, "fat": 28 }
+    }
+  }
+[
+  { "name": "Garlic Egg Masala", "unit": "serving",
+    "versions": { "home": {"cal":340,"prot":18,"carb":8,"fat":24},
+                  "restaurant":{"cal":420,"prot":20,"carb":10,"fat":32} } },
+
+  { "name": "Chicken Handi Kolhapuri", "unit": "serving",
+    "versions": { "home": {"cal":550,"prot":32,"carb":14,"fat":38},
+                  "restaurant":{"cal":650,"prot":34,"carb":18,"fat":48} } },
+
+  { "name": "Paneer Special Roast", "unit": "serving",
+    "versions": { "home": {"cal":480,"prot":20,"carb":12,"fat":32},
+                  "restaurant":{"cal":580,"prot":22,"carb":14,"fat":40} } },
+
+  { "name": "Veg Butter Masala", "unit": "serving",
+    "versions": { "home": {"cal":380,"prot":10,"carb":20,"fat":26},
+                  "restaurant":{"cal":470,"prot":12,"carb":24,"fat":34} } },
+
+  { "name": "Fish Spicy Curry", "unit": "serving",
+    "versions": { "home": {"cal":360,"prot":25,"carb":10,"fat":18},
+                  "restaurant":{"cal":450,"prot":27,"carb":12,"fat":26} } },
+
+  { "name": "Garlic 65", "unit": "serving",
+    "versions": { "home": {"cal":420,"prot":16,"carb":22,"fat":28},
+                  "restaurant":{"cal":520,"prot":18,"carb":26,"fat":36} } },
+
+  { "name": "Mutton Gravy Vindaloo", "unit": "serving",
+    "versions": { "home": {"cal":620,"prot":30,"carb":14,"fat":48},
+                  "restaurant":{"cal":720,"prot":32,"carb":18,"fat":58} } },
+
+  { "name": "Egg Roast Special", "unit": "serving",
+    "versions": { "home": {"cal":280,"prot":14,"carb":6,"fat":18},
+                  "restaurant":{"cal":350,"prot":15,"carb":8,"fat":26} } },
+
+  { "name": "Paneer Do Pyaza Special", "unit": "serving",
+    "versions": { "home": {"cal":410,"prot":18,"carb":16,"fat":28},
+                  "restaurant":{"cal":520,"prot":20,"carb":20,"fat":38} } },
+
+  { "name": "Chicken Noodles Handi", "unit": "serving",
+    "versions": { "home": {"cal":450,"prot":22,"carb":52,"fat":14},
+                  "restaurant":{"cal":560,"prot":25,"carb":60,"fat":20} } },
+
+  { "name": "Spicy Veg Special Biryani", "unit": "serving",
+    "versions": { "home": {"cal":430,"prot":10,"carb":66,"fat":12},
+                  "restaurant":{"cal":520,"prot":12,"carb":74,"fat":18} } },
+
+  { "name": "Paneer Garlic Noodles", "unit": "serving",
+    "versions": { "home": {"cal":420,"prot":16,"carb":58,"fat":12},
+                  "restaurant":{"cal":520,"prot":18,"carb":64,"fat":18} } },
+
+  { "name": "Chicken Manchurian Special", "unit": "serving",
+    "versions": { "home": {"cal":460,"prot":24,"carb":20,"fat":28},
+                  "restaurant":{"cal":560,"prot":26,"carb":26,"fat":38} } },
+
+  { "name": "Veg Chilli Garlic Fry", "unit": "serving",
+    "versions": { "home": {"cal":300,"prot":8,"carb":26,"fat":14},
+                  "restaurant":{"cal":380,"prot":9,"carb":30,"fat":20} } },
+
+  { "name": "Kolhapuri Paneer Tikka Masala", "unit": "serving",
+    "versions": { "home": {"cal":520,"prot":20,"carb":22,"fat":36},
+                  "restaurant":{"cal":630,"prot":22,"carb":26,"fat":46} } },
+
+  { "name": "Garlic Egg Noodles", "unit": "serving",
+    "versions": { "home": {"cal":380,"prot":16,"carb":54,"fat":10},
+                  "restaurant":{"cal":470,"prot":18,"carb":60,"fat":16} } },
+
+  { "name": "Chicken 65 Special", "unit": "serving",
+    "versions": { "home": {"cal":540,"prot":30,"carb":18,"fat":38},
+                  "restaurant":{"cal":650,"prot":32,"carb":22,"fat":50} } },
+
+  { "name": "Egg Chilli Roast", "unit": "serving",
+    "versions": { "home": {"cal":260,"prot":12,"carb":8,"fat":16},
+                  "restaurant":{"cal":330,"prot":13,"carb":10,"fat":22} } },
+
+  { "name": "Kashmiri Veg Curry", "unit": "serving",
+    "versions": { "home": {"cal":300,"prot":8,"carb":24,"fat":14},
+                  "restaurant":{"cal":380,"prot":9,"carb":28,"fat":20} } },
+
+  { "name": "Chicken Garlic Roast", "unit": "serving",
+    "versions": { "home": {"cal":480,"prot":30,"carb":10,"fat":30},
+                  "restaurant":{"cal":590,"prot":32,"carb":14,"fat":40} } },
+
+  { "name": "Paneer Special Khichdi", "unit": "serving",
+    "versions": { "home": {"cal":360,"prot":14,"carb":42,"fat":12},
+                  "restaurant":{"cal":430,"prot":15,"carb":48,"fat":18} } },
+
+  { "name": "Fish Butter Masala", "unit": "serving",
+    "versions": { "home": {"cal":510,"prot":28,"carb":14,"fat":34},
+                  "restaurant":{"cal":620,"prot":30,"carb":18,"fat":46} } },
+
+  { "name": "Veg Tandoori Roll", "unit": "serving",
+    "versions": { "home": {"cal":330,"prot":10,"carb":38,"fat":12},
+                  "restaurant":{"cal":420,"prot":12,"carb":44,"fat":18} } },
+
+  { "name": "Mutton Garlic Handi", "unit": "serving",
+    "versions": { "home": {"cal":620,"prot":32,"carb":10,"fat":46},
+                  "restaurant":{"cal":740,"prot":34,"carb":14,"fat":58} } },
+
+  { "name": "Paneer Special Chaat", "unit": "serving",
+    "versions": { "home": {"cal":280,"prot":10,"carb":28,"fat":10},
+                  "restaurant":{"cal":350,"prot":12,"carb":32,"fat":18} } },
+
+  { "name": "Chicken Garlic Fry", "unit": "serving",
+    "versions": { "home": {"cal":450,"prot":26,"carb":10,"fat":30},
+                  "restaurant":{"cal":560,"prot":28,"carb":14,"fat":40} } },
+
+  { "name": "Egg Hyderabadi Masala", "unit": "serving",
+    "versions": { "home": {"cal":300,"prot":14,"carb":10,"fat":18},
+                  "restaurant":{"cal":380,"prot":15,"carb":12,"fat":26} } },
+
+  { "name": "Veg Special Pulav", "unit": "serving",
+    "versions": { "home": {"cal":360,"prot":8,"carb":58,"fat":10},
+                  "restaurant":{"cal":430,"prot":9,"carb":64,"fat":16} } },
+
+  { "name": "Paneer Manchurian Garlic", "unit": "serving",
+    "versions": { "home": {"cal":420,"prot":18,"carb":20,"fat":26},
+                  "restaurant":{"cal":520,"prot":20,"carb":24,"fat":34} } },
+
+  { "name": "Chicken Spicy Roast", "unit": "serving",
+    "versions": { "home": {"cal":500,"prot":32,"carb":10,"fat":34},
+                  "restaurant":{"cal":620,"prot":34,"carb":12,"fat":46} } },
+
+  { "name": "Mutton Garlic Masala", "unit": "serving",
+    "versions": { "home": {"cal":580,"prot":28,"carb":12,"fat":42},
+                  "restaurant":{"cal":700,"prot":30,"carb":16,"fat":54} } },
+
+  { "name": "Paneer Roast Special", "unit": "serving",
+    "versions": { "home": {"cal":460,"prot":20,"carb":14,"fat":30},
+                  "restaurant":{"cal":560,"prot":22,"carb":18,"fat":40} } },
+
+  { "name": "Veg Garlic Roast", "unit": "serving",
+    "versions": { "home": {"cal":300,"prot":8,"carb":24,"fat":14},
+                  "restaurant":{"cal":380,"prot":9,"carb":28,"fat":20} } },
+
+  { "name": "Chicken Special Khichdi", "unit": "serving",
+    "versions": { "home": {"cal":420,"prot":26,"carb":40,"fat":14},
+                  "restaurant":{"cal":510,"prot":28,"carb":46,"fat":20} } },
+
+  { "name": "Paneer Hyderabadi Roast", "unit": "serving",
+    "versions": { "home": {"cal":500,"prot":22,"carb":16,"fat":34},
+                  "restaurant":{"cal":620,"prot":24,"carb":20,"fat":46} } },
+
+  { "name": "Spicy Egg Handi", "unit": "serving",
+    "versions": { "home": {"cal":310,"prot":16,"carb":10,"fat":18},
+                  "restaurant":{"cal":380,"prot":18,"carb":14,"fat":26} } },
+
+  { "name": "Veg Chilli Pulav", "unit": "serving",
+    "versions": { "home": {"cal":350,"prot":8,"carb":58,"fat":10},
+                  "restaurant":{"cal":420,"prot":9,"carb":64,"fat":16} } },
+
+  { "name": "Chicken Garlic Chilli", "unit": "serving",
+    "versions": { "home": {"cal":460,"prot":28,"carb":14,"fat":26},
+                  "restaurant":{"cal":560,"prot":30,"carb":18,"fat":38} } }
+]
+  ,
+  { "name": "Mutton Hyderabadi Curry", "unit": "serving",
+    "versions": { "home": { "cal": 420, "prot": 23, "carb": 10, "fat": 32 },
+                  "restaurant": { "cal": 520, "prot": 25, "carb": 12, "fat": 40 } } },
+
+  { "name": "Chicken Roast Fry", "unit": "serving",
+    "versions": { "home": { "cal": 380, "prot": 28, "carb": 8, "fat": 24 },
+                  "restaurant": { "cal": 460, "prot": 30, "carb": 10, "fat": 32 } } },
+
+  { "name": "Paneer Special Masala", "unit": "serving",
+    "versions": { "home": { "cal": 360, "prot": 14, "carb": 18, "fat": 26 },
+                  "restaurant": { "cal": 460, "prot": 15, "carb": 22, "fat": 34 } } },
+
+  { "name": "Fish Tikka Masala", "unit": "serving",
+    "versions": { "home": { "cal": 340, "prot": 26, "carb": 14, "fat": 18 },
+                  "restaurant": { "cal": 420, "prot": 28, "carb": 16, "fat": 26 } } },
+
+  { "name": "Egg Do Pyaza", "unit": "serving",
+    "versions": { "home": { "cal": 210, "prot": 12, "carb": 8, "fat": 14 },
+                  "restaurant": { "cal": 260, "prot": 12, "carb": 10, "fat": 18 } } },
+
+  { "name": "Veg Roast Handi", "unit": "serving",
+    "versions": { "home": { "cal": 260, "prot": 6, "carb": 22, "fat": 14 },
+                  "restaurant": { "cal": 330, "prot": 7, "carb": 26, "fat": 18 } } },
+
+  { "name": "Chicken Handi Hyderabadi", "unit": "serving",
+    "versions": { "home": { "cal": 420, "prot": 28, "carb": 12, "fat": 28 },
+                  "restaurant": { "cal": 520, "prot": 30, "carb": 14, "fat": 36 } } },
+
+  { "name": "Mutton Roast Tandoori", "unit": "serving",
+    "versions": { "home": { "cal": 460, "prot": 24, "carb": 6, "fat": 36 },
+                  "restaurant": { "cal": 560, "prot": 26, "carb": 8, "fat": 44 } } },
+
+  { "name": "Paneer Kolhapuri Masala", "unit": "serving",
+    "versions": { "home": { "cal": 330, "prot": 13, "carb": 16, "fat": 20 },
+                  "restaurant": { "cal": 430, "prot": 14, "carb": 20, "fat": 30 } } },
+
+  { "name": "Veg Pulav Special", "unit": "serving",
+    "versions": { "home": { "cal": 240, "prot": 5, "carb": 40, "fat": 6 },
+                  "restaurant": { "cal": 300, "prot": 6, "carb": 48, "fat": 9 } } },
+
+  { "name": "Chicken Khichdi Masala", "unit": "serving",
+    "versions": { "home": { "cal": 310, "prot": 20, "carb": 34, "fat": 10 },
+                  "restaurant": { "cal": 380, "prot": 22, "carb": 40, "fat": 14 } } },
+
+  { "name": "Mutton Handi Masala", "unit": "serving",
+    "versions": { "home": { "cal": 430, "prot": 26, "carb": 12, "fat": 32 },
+                  "restaurant": { "cal": 520, "prot": 28, "carb": 14, "fat": 40 } } },
+
+  { "name": "Egg Tandoori Fry", "unit": "serving",
+    "versions": { "home": { "cal": 260, "prot": 14, "carb": 6, "fat": 18 },
+                  "restaurant": { "cal": 320, "prot": 15, "carb": 8, "fat": 24 } } },
+
+  { "name": "Fish Garlic Roast", "unit": "serving",
+    "versions": { "home": { "cal": 300, "prot": 24, "carb": 8, "fat": 14 },
+                  "restaurant": { "cal": 380, "prot": 26, "carb": 10, "fat": 20 } } },
+
+  { "name": "Veg Special Manchurian", "unit": "serving",
+    "versions": { "home": { "cal": 280, "prot": 8, "carb": 20, "fat": 16 },
+                  "restaurant": { "cal": 340, "prot": 9, "carb": 24, "fat": 22 } } },
+
+  { "name": "Paneer 65", "unit": "serving",
+    "versions": { "home": { "cal": 330, "prot": 14, "carb": 18, "fat": 22 },
+                  "restaurant": { "cal": 420, "prot": 15, "carb": 22, "fat": 30 } } },
+
+  { "name": "Chicken 65 Hyderabadi", "unit": "serving",
+    "versions": { "home": { "cal": 360, "prot": 25, "carb": 12, "fat": 22 },
+                  "restaurant": { "cal": 460, "prot": 26, "carb": 14, "fat": 30 } } },
+
+  { "name": "Mutton Butter Masala", "unit": "serving",
+    "versions": { "home": { "cal": 480, "prot": 24, "carb": 16, "fat": 36 },
+                  "restaurant": { "cal": 580, "prot": 26, "carb": 18, "fat": 44 } } },
+
+  { "name": "Fish Special Fry", "unit": "serving",
+    "versions": { "home": { "cal": 340, "prot": 26, "carb": 10, "fat": 18 },
+                  "restaurant": { "cal": 420, "prot": 28, "carb": 12, "fat": 26 } } },
+
+  { "name": "Egg Vindaloo", "unit": "serving",
+    "versions": { "home": { "cal": 230, "prot": 12, "carb": 10, "fat": 14 },
+                  "restaurant": { "cal": 300, "prot": 13, "carb": 12, "fat": 18 } } },
+
+  { "name": "Veg Garlic Noodles", "unit": "serving",
+    "versions": { "home": { "cal": 280, "prot": 6, "carb": 46, "fat": 8 },
+                  "restaurant": { "cal": 340, "prot": 6, "carb": 52, "fat": 12 } } },
+
+  { "name": "Paneer Cheese Roll", "unit": "serving",
+    "versions": { "home": { "cal": 310, "prot": 12, "carb": 22, "fat": 18 },
+                  "restaurant": { "cal": 390, "prot": 12, "carb": 26, "fat": 26 } } },
+
+  { "name": "Chicken Cheese Cutlet", "unit": "serving",
+    "versions": { "home": { "cal": 340, "prot": 20, "carb": 18, "fat": 20 },
+                  "restaurant": { "cal": 420, "prot": 22, "carb": 22, "fat": 28 } } },
+
+  { "name": "Mutton Roast Vindaloo", "unit": "serving",
+    "versions": { "home": { "cal": 480, "prot": 24, "carb": 16, "fat": 36 },
+                  "restaurant": { "cal": 580, "prot": 26, "carb": 18, "fat": 44 } } },
+
+  { "name": "Fish Special Handi", "unit": "serving",
+    "versions": { "home": { "cal": 330, "prot": 26, "carb": 12, "fat": 18 },
+                  "restaurant": { "cal": 410, "prot": 28, "carb": 14, "fat": 26 } } },
+
+  { "name": "Egg Garlic Fry", "unit": "serving",
+    "versions": { "home": { "cal": 220, "prot": 12, "carb": 8, "fat": 14 },
+                  "restaurant": { "cal": 280, "prot": 12, "carb": 10, "fat": 18 } } },
+
+  { "name": "Veg Chilli Noodles", "unit": "serving",
+    "versions": { "home": { "cal": 290, "prot": 7, "carb": 48, "fat": 8 },
+                  "restaurant": { "cal": 350, "prot": 7, "carb": 54, "fat": 12 } } },
+
+  { "name": "Paneer Roast Handi", "unit": "serving",
+    "versions": { "home": { "cal": 330, "prot": 14, "carb": 16, "fat": 22 },
+                  "restaurant": { "cal": 420, "prot": 15, "carb": 20, "fat": 30 } } },
+
+  { "name": "Chicken Garlic Masala", "unit": "serving",
+    "versions": { "home": { "cal": 360, "prot": 26, "carb": 10, "fat": 20 },
+                  "restaurant": { "cal": 440, "prot": 28, "carb": 12, "fat": 28 } } },
+
+  { "name": "Mutton Special Masala", "unit": "serving",
+    "versions": { "home": { "cal": 460, "prot": 26, "carb": 14, "fat": 34 },
+                  "restaurant": { "cal": 560, "prot": 28, "carb": 16, "fat": 42 } } },
+
+  { "name": "Fish 65 Special", "unit": "serving",
+    "versions": { "home": { "cal": 330, "prot": 26, "carb": 12, "fat": 18 },
+                  "restaurant": { "cal": 410, "prot": 28, "carb": 14, "fat": 26 } } },
+
+  { "name": "Egg Special Curry", "unit": "serving",
+    "versions": { "home": { "cal": 240, "prot": 12, "carb": 10, "fat": 16 },
+                  "restaurant": { "cal": 300, "prot": 12, "carb": 12, "fat": 20 } } }
+  {
+    "name": "Chettinad Special Curry",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 330, "prot": 19, "carb": 14, "fat": 18 },
+      "restaurant": { "cal": 410, "prot": 22, "carb": 17, "fat": 26 }
+    }
+  },
+  {
+    "name": "Punjabi Chicken Handi",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 420, "prot": 27, "carb": 10, "fat": 28 },
+      "restaurant": { "cal": 510, "prot": 30, "carb": 12, "fat": 36 }
+    }
+  },
+  {
+    "name": "Paneer Tandoori Masala",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 360, "prot": 19, "carb": 16, "fat": 22 },
+      "restaurant": { "cal": 450, "prot": 22, "carb": 20, "fat": 30 }
+    }
+  },
+  {
+    "name": "Mutton Hyderabadi Roast",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 490, "prot": 28, "carb": 9, "fat": 35 },
+      "restaurant": { "cal": 590, "prot": 30, "carb": 11, "fat": 44 }
+    }
+  },
+  {
+    "name": "Egg Special Kolhapuri",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 310, "prot": 17, "carb": 12, "fat": 20 },
+      "restaurant": { "cal": 380, "prot": 18, "carb": 13, "fat": 26 }
+    }
+  },
+  {
+    "name": "Veg Mild Masala Curry",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 240, "prot": 7, "carb": 22, "fat": 12 },
+      "restaurant": { "cal": 300, "prot": 8, "carb": 24, "fat": 18 }
+    }
+  },
+  {
+    "name": "Fish Spicy Vindaloo",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 350, "prot": 26, "carb": 10, "fat": 18 },
+      "restaurant": { "cal": 430, "prot": 28, "carb": 12, "fat": 26 }
+    }
+  },
+  {
+    "name": "Paneer Special Do Pyaza",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 360, "prot": 18, "carb": 20, "fat": 22 },
+      "restaurant": { "cal": 430, "prot": 20, "carb": 22, "fat": 30 }
+    }
+  },
+  {
+    "name": "Veg Garlic Butter Masala",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 300, "prot": 8, "carb": 28, "fat": 14 },
+      "restaurant": { "cal": 370, "prot": 9, "carb": 31, "fat": 20 }
+    }
+  },
+  {
+    "name": "Chicken Kashmiri Handi",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 420, "prot": 28, "carb": 14, "fat": 26 },
+      "restaurant": { "cal": 500, "prot": 30, "carb": 16, "fat": 34 }
+    }
+  },
+  {
+    "name": "Egg Spicy Roast Masala",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 290, "prot": 15, "carb": 11, "fat": 18 },
+      "restaurant": { "cal": 340, "prot": 16, "carb": 12, "fat": 24 }
+    }
+  },
+  {
+    "name": "Chicken Chettinad 65",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 430, "prot": 29, "carb": 16, "fat": 28 },
+      "restaurant": { "cal": 540, "prot": 31, "carb": 18, "fat": 36 }
+    }
+  },
+  {
+    "name": "Paneer Garlic Roast",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 340, "prot": 18, "carb": 14, "fat": 22 },
+      "restaurant": { "cal": 420, "prot": 19, "carb": 16, "fat": 28 }
+    }
+  },
+  {
+    "name": "Veg Andhra Masala",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 260, "prot": 8, "carb": 22, "fat": 13 },
+      "restaurant": { "cal": 330, "prot": 9, "carb": 24, "fat": 18 }
+    }
+  },
+  {
+    "name": "Chicken Mild Butter Roast",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 380, "prot": 25, "carb": 12, "fat": 23 },
+      "restaurant": { "cal": 460, "prot": 27, "carb": 13, "fat": 30 }
+    }
+  },
+  {
+    "name": "Fish Tandoori Fry",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 310, "prot": 26, "carb": 8, "fat": 16 },
+      "restaurant": { "cal": 380, "prot": 27, "carb": 10, "fat": 22 }
+    }
+  },
+  {
+    "name": "Paneer Spicy Handi",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 350, "prot": 17, "carb": 18, "fat": 23 },
+      "restaurant": { "cal": 420, "prot": 18, "carb": 20, "fat": 30 }
+    }
+  },
+  {
+    "name": "Mutton Garlic Roast",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 480, "prot": 28, "carb": 11, "fat": 34 },
+      "restaurant": { "cal": 570, "prot": 29, "carb": 12, "fat": 44 }
+    }
+  },
+  {
+    "name": "Veg Chaat Masala Special",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 210, "prot": 5, "carb": 28, "fat": 8 },
+      "restaurant": { "cal": 260, "prot": 6, "carb": 32, "fat": 12 }
+    }
+  },
+  {
+    "name": "Chicken Handi Masala",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 400, "prot": 26, "carb": 12, "fat": 25 },
+      "restaurant": { "cal": 480, "prot": 28, "carb": 14, "fat": 33 }
+    }
+  },
+  {
+    "name": "Veg Butter Kolhapuri",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 280, "prot": 7, "carb": 24, "fat": 14 },
+      "restaurant": { "cal": 350, "prot": 8, "carb": 27, "fat": 20 }
+    }
+  },
+  {
+    "name": "Paneer Kashmiri Masala",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 360, "prot": 18, "carb": 20, "fat": 23 },
+      "restaurant": { "cal": 430, "prot": 19, "carb": 22, "fat": 30 }
+    }
+  },
+  {
+    "name": "Fish Special Curry",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 340, "prot": 26, "carb": 10, "fat": 20 },
+      "restaurant": { "cal": 420, "prot": 28, "carb": 12, "fat": 28 }
+    }
+  },
+  {
+    "name": "Chicken Garlic 65",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 430, "prot": 29, "carb": 17, "fat": 27 },
+      "restaurant": { "cal": 540, "prot": 31, "carb": 19, "fat": 36 }
+    }
+  },
+  {
+    "name": "Veg Roast Handi",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 260, "prot": 8, "carb": 22, "fat": 14 },
+      "restaurant": { "cal": 320, "prot": 9, "carb": 24, "fat": 18 }
+    }
+  },
+  {
+    "name": "Egg Garlic Roast",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 290, "prot": 15, "carb": 12, "fat": 18 },
+      "restaurant": { "cal": 340, "prot": 16, "carb": 13, "fat": 24 }
+    }
+  },
+  {
+    "name": "Paneer Tikka Pulav",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 360, "prot": 19, "carb": 38, "fat": 16 },
+      "restaurant": { "cal": 430, "prot": 20, "carb": 42, "fat": 22 }
+    }
+  },
+  {
+    "name": "Veg Special Khichdi",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 220, "prot": 7, "carb": 36, "fat": 5 },
+      "restaurant": { "cal": 270, "prot": 8, "carb": 40, "fat": 9 }
+    }
+  },
+  {
+    "name": "Chicken Roast Masala",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 410, "prot": 28, "carb": 12, "fat": 28 },
+      "restaurant": { "cal": 500, "prot": 30, "carb": 14, "fat": 36 }
+    }
+  },
+  {
+    "name": "Mutton Special Masala",
+    "unit": "serving",
+    "versions": {
+      "home": { "cal": 500, "prot": 29, "carb": 12, "fat": 38 },
+      "restaurant": { "cal": 600, "prot": 31, "carb": 14, "fat": 48 }
+    }
+  }
+]
